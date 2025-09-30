@@ -1,11 +1,13 @@
 use std::sync::Arc;
 use futures_util::StreamExt;
 use tracing::{info, debug, warn};
+use chrono::Utc;
 
 use mono_ai::{Message, MonoAI};
 
 use crate::config::Config;
 use crate::binance_client::BinanceClient;
+use crate::persistence::{PersistenceManager, TradingState, TradingDecision};
 
 const SYSTEM_MESSAGE: &'static str = r#"
 You are a professional crypto trader with years of market experience.
@@ -21,25 +23,34 @@ Role & Character:
 	•	Approach every symbol like a pro analyzing charts, data, and signals.
 	•	You may take as many turns as needed to carefully evaluate conditions before acting.
 
+Previous Decision Context:
+	•	You will be provided with your previous trading decisions for each symbol.
+	•	Consider your past decisions, their confidence levels, and explanations.
+	•	Learn from previous patterns - if you consistently made certain decisions, analyze why.
+	•	Avoid repeating the same mistakes or being overly conservative/aggressive based on past performance.
+	•	Use historical context to improve decision quality, but don't be bound by past decisions if market conditions have changed.
+
 Behavior Rules:
 	1.	Always start by gathering and examining available market data for the symbol.
-	2.	Perform a step-by-step analysis of the situation, considering short-term, mid-term, and long-term perspectives if needed.
-	3.	Use clear, structured reasoning to explain your thought process.
-	4.	When you are ready, provide one final and definitive trading decision:
+	2.	Review your previous trading history for this symbol if provided.
+	3.	Perform a step-by-step analysis of the situation, considering short-term, mid-term, and long-term perspectives if needed.
+	4.	Use clear, structured reasoning to explain your thought process.
+	5.	When you are ready, provide one final and definitive trading decision:
 	•	BUY
 	•	SELL
 	•	HOLD
-	5.	Once the decision is made, invoke the correct execution tool:
+	6.	Once the decision is made, invoke the correct execution tool:
 	•	buy
 	•	sell
 	•	hold
-	6.	Never output more than one final action per symbol analysis.
-	7.	If conditions are uncertain, continue analyzing until you can confidently justify your final decision.
+	7.	Never output more than one final action per symbol analysis.
+	8.	If conditions are uncertain, continue analyzing until you can confidently justify your final decision.
 
 Style & Precision:
 	•	Write in the voice of a confident professional trader.
 	•	No unnecessary fluff, only sharp, practical reasoning.
 	•	Ensure your final decision is actionable, unambiguous, and justified.
+	•	Reference previous decisions when relevant to current analysis.
 "#;
 
 #[derive(Debug)]
@@ -63,6 +74,8 @@ pub struct Bot {
     config: Arc<Config>,
     messages: Vec<Message>,
     current_turn: usize,
+    persistence_manager: Arc<PersistenceManager>,
+    trading_state: TradingState,
 }
 
 impl Bot {
@@ -100,11 +113,17 @@ impl Bot {
         ai.add_tool(crate::tools::binance_trade::sell_tool()).await?;
         ai.add_tool(crate::tools::binance_trade::hold_tool()).await?;
 
+        // Initialize persistence manager
+        let persistence_manager = Arc::new(PersistenceManager::new("data/trading_state.json"));
+        let trading_state = persistence_manager.load_state();
+        
         Ok(Self {
             ai: Arc::new(ai),
             config,
             messages: vec![],
             current_turn: 0,
+            persistence_manager,
+            trading_state,
         })
     }
 
@@ -136,9 +155,12 @@ impl Bot {
         // Get account information
         let account_info = self.get_account_info();
         
+        // Get trading history for this symbol
+        let trading_history = self.trading_state.generate_context_summary(symbol);
+        
         let context_msg = format!(
-            "Analyze symbol: {}. You have {} turns remaining to make your decision. Current turn: {}/{}\n\n{}",
-            symbol, turns_remaining, self.current_turn + 1, self.config.bot_max_turns, account_info
+            "Analyze symbol: {}. You have {} turns remaining to make your decision. Current turn: {}/{}\n\n{}\n{}",
+            symbol, turns_remaining, self.current_turn + 1, self.config.bot_max_turns, account_info, trading_history
         );
         
         self.messages.push(Message {
@@ -214,28 +236,78 @@ impl Bot {
                     match tool_call.function.name.as_str() {
                         "buy" => {
                             if let Ok(args) = serde_json::from_str::<serde_json::Value>(&tool_call.function.arguments.to_string()) {
+                                let pair = args["pair"].as_str().unwrap_or(symbol).to_string();
+                                let amount = args["amount"].as_f64().unwrap_or(0.0);
+                                let confidence = args["confidence"].as_u64().unwrap_or(0) as usize;
+                                let explanation = args["explanation"].as_str().unwrap_or("").to_string();
+                                
                                 final_decision = Some(BotDecision::Buy {
-                                    pair: args["pair"].as_str().unwrap_or(symbol).to_string(),
-                                    amount: args["amount"].as_f64().unwrap_or(0.0),
-                                    confidence: args["confidence"].as_u64().unwrap_or(0) as usize,
+                                    pair: pair.clone(),
+                                    amount,
+                                    confidence,
                                 });
+                                
+                                // Save trading decision to persistence
+                                let trading_decision = TradingDecision {
+                                    symbol: pair,
+                                    action: "BUY".to_string(),
+                                    amount: Some(amount),
+                                    confidence,
+                                    explanation,
+                                    timestamp: Utc::now(),
+                                    price_at_decision: None, // TODO: Get current price
+                                };
+                                self.trading_state.add_decision(trading_decision);
                             }
                         }
                         "sell" => {
                             if let Ok(args) = serde_json::from_str::<serde_json::Value>(&tool_call.function.arguments.to_string()) {
+                                let pair = args["pair"].as_str().unwrap_or(symbol).to_string();
+                                let amount = args["amount"].as_f64().unwrap_or(0.0);
+                                let confidence = args["confidence"].as_u64().unwrap_or(0) as usize;
+                                let explanation = args["explanation"].as_str().unwrap_or("").to_string();
+                                
                                 final_decision = Some(BotDecision::Sell {
-                                    pair: args["pair"].as_str().unwrap_or(symbol).to_string(),
-                                    amount: args["amount"].as_f64().unwrap_or(0.0),
-                                    confidence: args["confidence"].as_u64().unwrap_or(0) as usize,
+                                    pair: pair.clone(),
+                                    amount,
+                                    confidence,
                                 });
+                                
+                                // Save trading decision to persistence
+                                let trading_decision = TradingDecision {
+                                    symbol: pair,
+                                    action: "SELL".to_string(),
+                                    amount: Some(amount),
+                                    confidence,
+                                    explanation,
+                                    timestamp: Utc::now(),
+                                    price_at_decision: None, // TODO: Get current price
+                                };
+                                self.trading_state.add_decision(trading_decision);
                             }
                         }
                         "hold" => {
                             if let Ok(args) = serde_json::from_str::<serde_json::Value>(&tool_call.function.arguments.to_string()) {
+                                let pair = args["pair"].as_str().unwrap_or(symbol).to_string();
+                                let confidence = args["confidence"].as_u64().unwrap_or(0) as usize;
+                                let explanation = args["explanation"].as_str().unwrap_or("").to_string();
+                                
                                 final_decision = Some(BotDecision::Hold {
-                                    pair: args["pair"].as_str().unwrap_or(symbol).to_string(),
-                                    confidence: args["confidence"].as_u64().unwrap_or(0) as usize,
+                                    pair: pair.clone(),
+                                    confidence,
                                 });
+                                
+                                // Save trading decision to persistence
+                                let trading_decision = TradingDecision {
+                                    symbol: pair,
+                                    action: "HOLD".to_string(),
+                                    amount: None,
+                                    confidence,
+                                    explanation,
+                                    timestamp: Utc::now(),
+                                    price_at_decision: None, // TODO: Get current price
+                                };
+                                self.trading_state.add_decision(trading_decision);
                             }
                         }
                         _ => {}
@@ -262,9 +334,15 @@ impl Bot {
                 
                 self.messages.extend(tool_responses);
 
-                // If a trading decision was made, break the loop
+                // If a trading decision was made, save state and break the loop
                 if final_decision.is_some() {
                     info!("🎯 Final trading decision made!");
+                    
+                    // Save the updated trading state
+                    if let Err(e) = self.persistence_manager.save_state(&self.trading_state) {
+                        warn!("⚠️ Failed to save trading state: {}", e);
+                    }
+                    
                     break;
                 }
 
@@ -329,5 +407,16 @@ impl Bot {
 
     pub fn get_max_turns(&self) -> usize {
         self.config.bot_max_turns
+    }
+
+    pub fn increment_run_counter(&mut self) {
+        self.trading_state.increment_runs();
+        if let Err(e) = self.persistence_manager.save_state(&self.trading_state) {
+            warn!("⚠️ Failed to save run counter: {}", e);
+        }
+    }
+
+    pub fn get_total_runs(&self) -> usize {
+        self.trading_state.total_runs
     }
 }

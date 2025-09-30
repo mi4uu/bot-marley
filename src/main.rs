@@ -40,9 +40,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut bot = Bot::new(config).await?
         .add_system_message();
     
+    info!("📊 Trading state loaded:");
+    info!("  - Total previous runs: {}", bot.get_total_runs());
+    
     // Test symbols to analyze
     let test_symbols = vec!["BTCUSDT", "ETHUSDT"];
     loop{
+        // Increment run counter at the start of each loop
+        bot.increment_run_counter();
+        info!("🔄 Starting run #{}", bot.get_total_runs());
+        
         for symbol in test_symbols.clone() {
             println!("\n{}", "=".repeat(60));
             info!("🎯 Starting analysis for {}", symbol);
