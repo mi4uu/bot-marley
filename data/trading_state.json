@@ -1,49 +1,1055 @@
 {
   "symbols": {
-    "BTCUSDT": {
-      "symbol": "BTCUSDT",
+    "BNBBTC": {
+      "symbol": "BNBBTC",
       "decisions": [
         {
-          "symbol": "BTCUSDT",
+          "symbol": "BNBBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "BNBBTC shows a Bollinger squeeze indicating potential breakout, but current short‑term trend is down and MACD is below zero. With no clear upward momentum and a recent 2% daily decline, the safest move is to hold until clearer bullish signals appear. Confidence moderate as volatility could spike quickly.",
+          "timestamp": "2025-09-30T21:35:15.151928Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BNBBTC",
           "action": "HOLD",
           "amount": null,
           "confidence": 80,
-          "explanation": "SMA/EMA bullish but short‑term trend is down and RSI neutral. No clear entry for a 2% quick profit. Hold until clearer breakout.",
-          "timestamp": "2025-09-30T21:13:38.250581Z",
-          "price_at_decision": null
+          "explanation": "BNBBTC is consolidating in a tight Bollinger band with price below key moving averages and MACD staying negative. RSI is neutral at 42, not showing bullish reversal yet. No clear breakout signal; risk of a quick pullback remains high. Holding until price breaks above the upper Bollinger band or EMA20 with a 2% uptick will give us a better entry point. Confidence 80%.",
+          "timestamp": "2025-09-30T21:38:46.083347Z",
+          "price_at_decision": null,
+          "price_timestamp": null
         },
         {
-          "symbol": "BTCUSDT",
+          "symbol": "BNBBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Price consolidating near SMA20/EMA20 with bearish momentum. RSI neutral, no breakout. Hold until clear upward move beyond upper Bollinger band or 2% gain.",
+          "timestamp": "2025-09-30T21:53:55.269474Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "BNBBTC",
           "action": "HOLD",
           "amount": null,
           "confidence": 85,
-          "explanation": "SMA20 still slightly above price, indicating short‑term bearish bias. EMA20 bullish but MACD remains below zero and histogram shows weak positive momentum. RSI is neutral at 52, no clear overbought/oversold reversal. The best strategy to achieve a 2% quick profit is to wait for a decisive breakout above the recent resistance near $114,400 before entering. Until then, hold to avoid a potential retracement.",
-          "timestamp": "2025-09-30T21:14:58.967551Z",
-          "price_at_decision": null
+          "explanation": "Price consolidating below SMA20/EMA20, RSI 30 indicates weak momentum and potential reversal not yet confirmed. No breakout above upper Bollinger band. Hold until clear upward move or price exceeds 2% gain target.",
+          "timestamp": "2025-09-30T21:57:32.829304Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
         },
         {
-          "symbol": "BTCUSDT",
+          "symbol": "BNBBTC",
           "action": "HOLD",
           "amount": null,
           "confidence": 80,
-          "explanation": "Price sits above short‑term MA’s but MACD remains below zero and recent 5‑candle trend is down. RSI is mildly bullish but not strong enough for a quick 2% gain yet. Hold until a decisive breakout above the near‑term resistance (~$115k) confirms upward momentum.",
-          "timestamp": "2025-09-30T21:16:26.154737Z",
-          "price_at_decision": null
+          "explanation": "Price is consolidating at a flat level with RSI around 40, slightly bearish momentum. Moving averages confirm price below SMA20/EMA20 and no breakout above Bollinger upper band. Historical pattern shows holding until a clear upward move or 2% target is reached. No imminent signal to buy or sell, so hold.",
+          "timestamp": "2025-09-30T22:04:21.437738Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "BNBBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Short-term bearish trend confirmed by price below SMA/EMA20, Bollinger squeeze with %B near zero, RSI around 39. No breakout or reversal signal; holding until a clear upward move occurs is prudent.",
+          "timestamp": "2025-09-30T22:07:54.236810Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "BNBBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 90,
+          "explanation": "Short‑term bearish trend confirmed: price sits below SMA/EMA20, RSI 32.7 indicates weak momentum, and recent candles show a flat‑down pattern with negligible volume spikes. No breakout or reversal signal is visible. Holding preserves capital until a clear upward move emerges, aligning with our 2% profit target strategy.",
+          "timestamp": "2025-09-30T22:11:58.915727Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "BNBBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Current price $0.0088 sits exactly at SMA/EMA20 and RSI 37.9 indicates weak bullish momentum. No breakout, volume flat. To achieve a 2% profit quickly we wait for clear reversal. Holding preserves capital until bullish signal emerges.",
+          "timestamp": "2025-09-30T22:17:19.305536Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "BNBBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Price is flat at SMA/EMA20 with weak bullish momentum (RSI 47.8, MACD slightly above signal but negative). No breakout or volume spike. To achieve a 2% quick profit we need a clear reversal; current conditions suggest holding until a bullish signal emerges. Past pattern shows holds here. Confidence 80%.",
+          "timestamp": "2025-09-30T22:22:22.622211Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
         }
       ],
       "last_decision": {
-        "symbol": "BTCUSDT",
+        "symbol": "BNBBTC",
         "action": "HOLD",
         "amount": null,
         "confidence": 80,
-        "explanation": "Price sits above short‑term MA’s but MACD remains below zero and recent 5‑candle trend is down. RSI is mildly bullish but not strong enough for a quick 2% gain yet. Hold until a decisive breakout above the near‑term resistance (~$115k) confirms upward momentum.",
-        "timestamp": "2025-09-30T21:16:26.154737Z",
-        "price_at_decision": null
+        "explanation": "Price is flat at SMA/EMA20 with weak bullish momentum (RSI 47.8, MACD slightly above signal but negative). No breakout or volume spike. To achieve a 2% quick profit we need a clear reversal; current conditions suggest holding until a bullish signal emerges. Past pattern shows holds here. Confidence 80%.",
+        "timestamp": "2025-09-30T22:22:22.622211Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271099999
       },
-      "total_decisions": 3,
+      "total_decisions": 9,
       "buy_count": 0,
       "sell_count": 0,
-      "hold_count": 3
+      "hold_count": 9
+    },
+    "ADAUSDC": {
+      "symbol": "ADAUSDC",
+      "decisions": [
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Price is currently above SMA20/EMA20 indicating short‑term bullish bias, but MACD shows a bearish crossover and RSI has been high (81→65) suggesting potential pullback. No clear buy or sell trigger for a 2% gain within the next 10‑15 minutes. Holding until momentum confirms (e.g., MACD crosses above signal or price breaks back above 20‑EMA) maximizes probability of a quick profit while avoiding unnecessary risk.",
+          "timestamp": "2025-09-30T21:34:13.497397Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Short‑term trend is down and MACD below signal, RSI still high but declining. Price just above SMA20 suggests a weak bullish bias, yet momentum is fading. No clear 2% upward move expected within the next 10‑15 minutes. Holding keeps position open for a potential rebound when MACD crosses back above signal or price breaks 20‑EMA. No immediate sell trigger.",
+          "timestamp": "2025-09-30T21:37:40.790875Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "Short‑term trend remains weakly bullish with price just above SMA20/EMA20, but RSI is in over‑bought territory and MACD is below signal. A 2% upside within the next 10‑15 minutes is unlikely given recent price action and volume. Holding keeps us in position for a potential rebound when EMA crosses above SMA or MACD turns positive, while avoiding a premature sell that could miss the next upward move.",
+          "timestamp": "2025-09-30T21:47:48.031422Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759268999999
+        },
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Price sits above SMA20/EMA20 indicating short‑term bullish bias, but MACD is below its signal and RSI in mid‑overbought territory. Recent candles show a slight pullback after a brief rally, suggesting that the next 10‑minute window is unlikely to deliver a 2% upside. Holding keeps us positioned for a potential rebound when momentum shifts back to positive while avoiding an ill‑timed entry that could trigger a 2% downside.",
+          "timestamp": "2025-09-30T21:52:53.922347Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "Price is consolidating above short‑term SMAs but MACD remains negative and recent candles show a small downtrend. RSI is not overbought yet, but momentum is weak. Waiting for a clear bullish turn reduces risk of missing the 2% target within 10 minutes.",
+          "timestamp": "2025-09-30T21:56:37.248345Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
+        },
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Price is consolidating above short‑term SMAs, but the recent 5‑candle trend remains down. RSI is neutral (48.9) and MACD was negative in prior data, indicating weak momentum. A quick 2% gain within 10 minutes is unlikely; better to wait for a clearer bullish reversal before risking capital.",
+          "timestamp": "2025-09-30T22:02:29.973926Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "Price sits above short‑term SMAs but recent 5‑candle trend is still down and RSI is neutral. EMA lagging suggests short‑term bearish momentum may persist. A 2% gain in <10 min is unlikely; better to wait for a clear reversal. Consistent with prior HOLD decisions.",
+          "timestamp": "2025-09-30T22:06:54.635305Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Price is in a short‑term downtrend, RSI 40.9 indicates neutral to slightly bearish momentum, and SMA(20) sits above current price while EMA is below – classic mixed signals. The 5‑candle trend remains downward and the price has not breached any key support levels. A quick 2% gain in <10 min is unlikely; better to hold until a clear reversal or break above the 20‑period SMA.",
+          "timestamp": "2025-09-30T22:11:06.667790Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Price remains below SMA(20) with RSI 35.8 indicating weak momentum; EMA slightly below price but not enough for bullish turn. Short‑term 2% gain unlikely within 10 min. Holding until a clear break above SMA(20) or RSI climbs above 50 is prudent.",
+          "timestamp": "2025-09-30T22:16:07.722206Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "ADAUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Price remains below SMA(20) and RSI under 50, indicating weak bullish momentum. EMA is slightly below price but still lagging SMA, and Bollinger bands show a squeeze with low volatility—typical precursor to a breakout but not a confirmed one. The recent candles show a short‑term downtrend and no clear reversal signals. Holding until we see a sustained move above SMA(20) or RSI climbs past 50 gives the best chance for a quick 2% gain while limiting downside risk.",
+          "timestamp": "2025-09-30T22:21:37.023872Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
+        }
+      ],
+      "last_decision": {
+        "symbol": "ADAUSDC",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 80,
+        "explanation": "Price remains below SMA(20) and RSI under 50, indicating weak bullish momentum. EMA is slightly below price but still lagging SMA, and Bollinger bands show a squeeze with low volatility—typical precursor to a breakout but not a confirmed one. The recent candles show a short‑term downtrend and no clear reversal signals. Holding until we see a sustained move above SMA(20) or RSI climbs past 50 gives the best chance for a quick 2% gain while limiting downside risk.",
+        "timestamp": "2025-09-30T22:21:37.023872Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271099999
+      },
+      "total_decisions": 10,
+      "buy_count": 0,
+      "sell_count": 0,
+      "hold_count": 10
+    },
+    "DOTUSDC": {
+      "symbol": "DOTUSDC",
+      "decisions": [
+        {
+          "symbol": "DOTUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 60,
+          "explanation": "Short‑term downtrend, price below SMA/EMA, MACD below signal; no clear bullish reversal yet. Hold to avoid unnecessary loss and watch for breakout above 20‑EMA/MA.",
+          "timestamp": "2025-09-30T21:34:29.053458Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "DOTUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "EMA is bullish but price still below SMA and MACD just above signal with decreasing histogram. RSI neutral 53. No clear breakout yet; risk of retracement. Hold until a decisive bullish reversal or price crosses above 20‑EMA and SMA with volume confirmation.",
+          "timestamp": "2025-09-30T21:37:56.936053Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "DOTUSDC",
+          "action": "BUY",
+          "amount": 5.0,
+          "confidence": 70,
+          "explanation": "Price above SMA20 but EMA20 below, MACD negative yet above signal with rising histogram, RSI 56 indicates bullish momentum. Recent highs near $3.935 suggest breakout potential. Quick 2% target achievable within minutes. Holding risk of retracement high, so buy now.",
+          "timestamp": "2025-09-30T21:53:14.342015Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "DOTUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "Current price $3.918 is just above SMA20/EMA20, but RSI 51.28 indicates neutral momentum and recent high at $3.935 suggests potential pullback before a breakout. Quick 2% target (~$3.998) is ~5% away, too large for a minutes‑range trade. Better to wait for clearer bullish confirmation (e.g., RSI >60 or price breaking $3.935 with volume spike).",
+          "timestamp": "2025-09-30T21:56:49.163892Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
+        },
+        {
+          "symbol": "DOTUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Price is marginally above EMA but below SMA, RSI 42 indicates weak buying momentum, MACD below signal. Recent candles show a small downtrend. No breakout signals or volume spikes. Holding allows us to wait for clearer bullish confirmation before risking a 2% gain.",
+          "timestamp": "2025-09-30T22:02:43.406979Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "DOTUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 60,
+          "explanation": "Current price sits just above short‑term SMA but below EMA and MACD remains negative. RSI is neutral at 45.9, indicating no strong buying momentum yet. Recent candles show a slight downtrend and the price is still 0.5% below its 8‑hour high, so a quick 2 % rally is unlikely in the next 10 minutes. Holding gives us time to watch for a clear bullish crossover or volume spike before risking a trade.",
+          "timestamp": "2025-09-30T22:07:08.570113Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "DOTUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Price is slightly below 20‑SMA, above EMA but MACD still negative and RSI near neutral. Recent candles show a small downtrend; no clear bullish crossover or volume spike. A 2 % rally in the next 10 minutes is improbable, and holding lets us wait for a clearer breakout or volume surge before committing. Maintain current position.",
+          "timestamp": "2025-09-30T22:11:20.697328Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "DOTUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "All indicators show mixed signals; short‑term bullish bias not strong enough for entry. Holding preserves capital and waits for clearer breakout.",
+          "timestamp": "2025-09-30T22:16:39.835733Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "DOTUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "SMA slightly above price and recent candles trending up, but RSI is neutral at 54 and overall volatility low. No clear breakout or momentum spike for a quick 2% gain within minutes. Holding preserves capital and waits for stronger bullish confirmation.",
+          "timestamp": "2025-09-30T22:21:48.320966Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
+        }
+      ],
+      "last_decision": {
+        "symbol": "DOTUSDC",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 70,
+        "explanation": "SMA slightly above price and recent candles trending up, but RSI is neutral at 54 and overall volatility low. No clear breakout or momentum spike for a quick 2% gain within minutes. Holding preserves capital and waits for stronger bullish confirmation.",
+        "timestamp": "2025-09-30T22:21:48.320966Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271099999
+      },
+      "total_decisions": 9,
+      "buy_count": 1,
+      "sell_count": 0,
+      "hold_count": 8
+    },
+    "BTCUSDC": {
+      "symbol": "BTCUSDC",
+      "decisions": [
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Short‑term trend bearish, price below EMA and MACD histogram negative. SMA bullish but weaker. No clear breakout for a 2% upside in the next 10 minutes. Holding gives time to wait for reversal signals.",
+          "timestamp": "2025-09-30T21:33:56.551420Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Current short‑term trend is up but indicators show only moderate momentum (RSI 50.8, EMA20 just above price). Volatility is low; a 2% swing in the next 10 minutes is unlikely. Holding preserves position for clearer breakout signals.",
+          "timestamp": "2025-09-30T21:37:26.899384Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "EMA20 above price and RSI near neutral with slight bearish signals indicate short‑term weakness. Recent 5‑candle trend is down and volatility low, making a quick 2% gain unlikely within 10 minutes. Holding preserves the position until clearer bullish breakout emerges.",
+          "timestamp": "2025-09-30T21:47:36.578292Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759268999999
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "EMA20 is above price, RSI near neutral with slight bearish tone, recent 5‑candle trend up but still below key EMA. Volatility is low and no clear breakout signal. A quick 2% move in the next 10 minutes is unlikely. Holding preserves position until a stronger bullish reversal emerges.",
+          "timestamp": "2025-09-30T21:52:37.377912Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 90,
+          "explanation": "Price sits between EMA20 and SMA20, RSI neutral (~49) and recent 5‑candle trend is down. No breakout or reversal signals on short‑term indicators. Volatility low and no clear 2% move in next 10 min is expected. Holding preserves position until a stronger bullish reversal emerges.",
+          "timestamp": "2025-09-30T21:56:22.964618Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 90,
+          "explanation": "No BTC balance available; current bearish indicators confirm no short‑term upside. Hold until position or market changes.",
+          "timestamp": "2025-09-30T22:02:19.445107Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 88,
+          "explanation": "Price remains below SMA/EMA20 and RSI indicates bearish momentum. No short‑term reversal signals detected. Hold until clearer bullish setup appears.",
+          "timestamp": "2025-09-30T22:06:44.186347Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "MACD bullish but price below EMA20/SMA20 and RSI remains bearish at 30. The recent downtrend over the last 5 candles indicates short‑term weakness. Bollinger %B is low, suggesting potential oversold conditions but not a clear breakout yet. To achieve a 2% profit in <10 min, we would need a rapid reversal which is not supported by the current indicators. Hold until price shows a clear bullish crossover or RSI climbs above 50.",
+          "timestamp": "2025-09-30T22:10:55.624781Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "MACD bullish but price below EMA20/SMA20, RSI remains oversold at 30 and short‑term candles show a downtrend. A rapid 2% gain in <10 min would require a sharp reversal that current indicators do not support. Await clear bullish crossover or RSI climbing above 50 before acting.",
+          "timestamp": "2025-09-30T22:15:58.746242Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 90,
+          "explanation": "SMA/EMA20 below price, RSI still low at 37.7, no bullish MACD crossover yet. Current short‑term trend is down. Waiting for a clear reversal before committing.",
+          "timestamp": "2025-09-30T22:21:22.530512Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
+        },
+        {
+          "symbol": "BTCUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Current price is well below 20‑EMA/SMA, RSI indicates weak momentum and no bullish MACD crossover. Short‑term trend remains bearish. No clear reversal signals, so holding is the prudent choice.",
+          "timestamp": "2025-09-30T22:25:40.520917Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271399999
+        }
+      ],
+      "last_decision": {
+        "symbol": "BTCUSDC",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 80,
+        "explanation": "Current price is well below 20‑EMA/SMA, RSI indicates weak momentum and no bullish MACD crossover. Short‑term trend remains bearish. No clear reversal signals, so holding is the prudent choice.",
+        "timestamp": "2025-09-30T22:25:40.520917Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271399999
+      },
+      "total_decisions": 11,
+      "buy_count": 0,
+      "sell_count": 0,
+      "hold_count": 11
+    },
+    "DOGEUSDC": {
+      "symbol": "DOGEUSDC",
+      "decisions": [
+        {
+          "symbol": "DOGEUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Short‑term indicators all point to a bearish bias: price sits below SMA/EMA, Bollinger middle band, MACD line under signal. RSI is neutral and not overbought. With no prior position and aiming for 2% quick gains, the safest move is to hold until a clear reversal emerges.",
+          "timestamp": "2025-09-30T21:34:45.323070Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "DOGEUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Short‑term indicators all point to a bearish bias: price sits below SMA/EMA, Bollinger middle band, MACD line under signal. RSI is neutral and not overbought. With no prior position and aiming for 2% quick gains, the safest move is to hold until a clear reversal emerges.",
+          "timestamp": "2025-09-30T21:38:14.797275Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "DOGEUSDC",
+          "action": "BUY",
+          "amount": 80.0,
+          "confidence": 65,
+          "explanation": "Price above SMA, neutral bullish RSI, recent uptrend. Buying 80 DOGE (~$18.66) targets quick 2% gain within minutes.",
+          "timestamp": "2025-09-30T21:53:33.659522Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "DOGEUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Bollinger squeeze indicates low volatility and potential breakout. Current price sits at middle band; recent uptrend continues, but 2% target not yet met. Hold to capture likely upward breakout while avoiding premature sell.",
+          "timestamp": "2025-09-30T21:57:04.395092Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
+        },
+        {
+          "symbol": "DOGEUSDC",
+          "action": "BUY",
+          "amount": 5.0,
+          "confidence": 70,
+          "explanation": "Price above EMA20 and middle Bollinger band, RSI neutral. Volatility compression indicates a breakout is likely. Target 2% achievable if price moves above upper band. Small position to minimize risk while capturing quick upside.",
+          "timestamp": "2025-09-30T22:03:04.890565Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "DOGEUSDC",
+          "action": "BUY",
+          "amount": 80.0,
+          "confidence": 60,
+          "explanation": "Price above EMA20 and SMA, Bollinger squeeze indicates imminent breakout. RSI neutral, MACD slightly below signal but still positive. Expect quick upside to reach 2% target within next 10‑15 minutes. Small position minimizes risk.",
+          "timestamp": "2025-09-30T22:07:30.811187Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "DOGEUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "SMA20 is above current price indicating a bearish trend, EMA20 aligns but RSI shows weak momentum. Recent candles confirm a short‑term downtrend. Previous buy was at 60% confidence; market has since moved lower, so holding avoids a potential loss while awaiting a reversal. No clear breakout signals presently.",
+          "timestamp": "2025-09-30T22:11:34.430063Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "DOGEUSDC",
+          "action": "BUY",
+          "amount": 50.0,
+          "confidence": 60,
+          "explanation": "SMA20 and EMA20 indicate a bullish bias; short‑term candles are trending up, RSI is neutral at 41.11. Volatility moderate and a quick pull‑back can give a 2% gain within minutes. Buying 50 units (~$11.67) stays below the $20 limit.",
+          "timestamp": "2025-09-30T22:16:58.397255Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "DOGEUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "SMA20/EMA20 below price, bearish momentum, RSI neutral low. No clear reversal yet. Hold and monitor for bullish crossover before buying.",
+          "timestamp": "2025-09-30T22:21:58.709076Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
+        }
+      ],
+      "last_decision": {
+        "symbol": "DOGEUSDC",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 70,
+        "explanation": "SMA20/EMA20 below price, bearish momentum, RSI neutral low. No clear reversal yet. Hold and monitor for bullish crossover before buying.",
+        "timestamp": "2025-09-30T22:21:58.709076Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271099999
+      },
+      "total_decisions": 9,
+      "buy_count": 4,
+      "sell_count": 0,
+      "hold_count": 5
+    },
+    "ETHUSDC": {
+      "symbol": "ETHUSDC",
+      "decisions": [
+        {
+          "symbol": "ETHUSDC",
+          "action": "SELL",
+          "amount": 0.005,
+          "confidence": 70,
+          "explanation": "Price below key moving averages and MACD bearish; short-term dip expected. Selling 0.005 ETH (~$20) locks potential 2% gain within minutes.",
+          "timestamp": "2025-09-30T21:33:41.477758Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "SELL",
+          "amount": 0.005,
+          "confidence": 75,
+          "explanation": "Price sits below key short‑term moving averages and MACD is still negative, indicating bearish momentum. Recent 5‑candle trend confirms a short‑term pullback. We can capture the ~2% upside within minutes by selling now and re-entering when price retraces above SMA/EMA.",
+          "timestamp": "2025-09-30T21:37:13.696832Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "SELL",
+          "amount": 0.005,
+          "confidence": 70,
+          "explanation": "Current price $4171.53; price below SMA20/EMA20 and recent downtrend indicates short‑term bearish bias. RSI neutral (52). Expect a ~2% rebound in next 10–15 minutes. Selling 0.005 ETH (~$20) stays within the $22 limit and locks in profit while we wait for a retracement above the 20‑period averages before re‑entering.",
+          "timestamp": "2025-09-30T21:47:25.780606Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759268999999
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "SELL",
+          "amount": 0.005,
+          "confidence": 70,
+          "explanation": "Price sits below both SMA20 and EMA20 with a recent 5‑candle downtrend. RSI is neutral (51.6) and not indicating a reversal yet. Historical pattern shows quick 2% rebounds after short‑term sell-offs; we’ll exit now to lock in profit and wait for a retracement above the 20‑period averages before re‑entering.",
+          "timestamp": "2025-09-30T21:52:26.990060Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Price sits below SMA20, indicating short‑term bearish bias. RSI 41 confirms weak momentum. EMA20 is bullish but lower than price, suggesting a temporary pullback. Historical pattern shows quick 2% rebounds after sell‑offs; we should wait for a clean bounce above the 20‑period SMA before re‑entering to lock in profit. Holding now preserves capital until a clear bullish reversal appears.",
+          "timestamp": "2025-09-30T21:56:11.579808Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "BUY",
+          "amount": 0.0048,
+          "confidence": 70,
+          "explanation": "Current price $4157 is oversold (RSI 22.64) and below SMA20, indicating a short‑term rebound is likely. A position of 0.0048 ETH equals ~US$20, within the $20 limit, and gives exposure to a 2% upside (~$4241) if the pullback completes. Hold until price crosses SMA20 and then target a 2% profit.",
+          "timestamp": "2025-09-30T22:01:30.430102Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "SELL",
+          "amount": 0.0048,
+          "confidence": 80,
+          "explanation": "Price 4168 is below SMA20/EMA20 and RSI indicates bearish momentum. Recent downtrend of 5 candles suggests further decline. To secure the 2% target (~$4241) before potential pullback, we sell now and wait for a rebound. Current position from last BUY is 0.0048 ETH, matching the $20 limit.",
+          "timestamp": "2025-09-30T22:06:34.397925Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "RSI shows oversold but price remains below SMA20/EMA20 and the last five candles are a clear downtrend. No bullish crossover or momentum shift yet, so I’ll hold until we see a reversal signal before risking another trade.",
+          "timestamp": "2025-09-30T22:10:38.071670Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "RSI shows oversold but price remains below both SMA20 and EMA20, indicating a prevailing bearish trend. The recent 5 candles display an uptrend but not strong enough to break the 20‑period MA levels. To achieve a quick 2% gain we need a clear bullish reversal, which isn’t evident yet. Holding allows us to capture the next potential rebound without risking a loss if the trend continues down.",
+          "timestamp": "2025-09-30T22:15:44.984963Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Price remains below both SMA20 and EMA20, RSI is in oversold but still under 40, no clear bullish reversal. Recent candles show a slight downtrend. Holding allows us to capture the next rebound without risking a loss if trend continues.",
+          "timestamp": "2025-09-30T22:21:12.250943Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
+        },
+        {
+          "symbol": "ETHUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Price below both SMA20 and EMA20, RSI under 40 indicating oversold but no bullish reversal. Recent candles show slight downtrend. Holding allows capture rebound without risking loss.",
+          "timestamp": "2025-09-30T22:25:29.744614Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271399999
+        }
+      ],
+      "last_decision": {
+        "symbol": "ETHUSDC",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 70,
+        "explanation": "Price below both SMA20 and EMA20, RSI under 40 indicating oversold but no bullish reversal. Recent candles show slight downtrend. Holding allows capture rebound without risking loss.",
+        "timestamp": "2025-09-30T22:25:29.744614Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271399999
+      },
+      "total_decisions": 11,
+      "buy_count": 1,
+      "sell_count": 5,
+      "hold_count": 5
+    },
+    "BNBUSDC": {
+      "symbol": "BNBUSDC",
+      "decisions": [
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Short‑term trend bearish, price below SMA/EMA. No clear upward trigger; risk of a 2% dip before rebound. Hold until clearer bullish signal.",
+          "timestamp": "2025-09-30T21:33:23.936101Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "SMA/EMA below price? actually price 1006.45 vs SMA 1007.18, EMA 1007.13 -> price below both, indicating bearish trend. RSI near neutral but slightly bearish momentum, MACD negative histogram and below signal suggests weakening bullishness. No clear breakout; risk of 2% dip before rebound. Holding preserves capital until clearer bullish trigger.",
+          "timestamp": "2025-09-30T21:36:57.915018Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "SMA/EMA bullish but RSI neutral and recent price slightly below 50‑day SMA; risk of short dip. No clear breakout, so hold until clearer bullish trigger.",
+          "timestamp": "2025-09-30T21:47:04.894076Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759268999999
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Short‑term bearish trend: price below SMA/EMA20, RSI around 46 indicating neutral to slight weakness. No clear breakout above the 50‑day SMA, and recent candles show a downtrend over the last five periods. Given the goal of a 2% quick profit, there is insufficient momentum for a rapid rebound. Holding preserves capital while we watch for a clear bullish trigger such as price closing above the 20‑day SMA or an RSI surge. No immediate sell signal since we have no position.",
+          "timestamp": "2025-09-30T21:52:14.937777Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Price is below both SMA20 and EMA20, RSI indicates weak momentum (41.57). No bullish breakout or reversal signals. Holding preserves capital while awaiting a clear bullish trigger such as price closing above the 20‑day SMA or an RSI surge. No position to sell, so HOLD is optimal.",
+          "timestamp": "2025-09-30T21:55:56.426734Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 90,
+          "explanation": "Price is below both SMA20 and EMA20, RSI indicates weak bearish momentum (31). No bullish breakout or reversal signals. Holding preserves capital while awaiting a clear bullish trigger such as price closing above the 20‑day SMA or an RSI surge. No position to sell, so HOLD is optimal.",
+          "timestamp": "2025-09-30T22:01:08.113147Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 90,
+          "explanation": "Price is consistently below both SMA20 and EMA20, indicating a short‑term bearish trend. RSI sits at 34, just above oversold but still weak; no breakout or bullish reversal signals are present. Following our recent pattern of holding during such conditions maximizes capital preservation and positions us for a clear bullish trigger. No immediate profit target is attainable within 10‑minute windows, so we maintain a HOLD stance.",
+          "timestamp": "2025-09-30T22:06:21.758221Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Current price is below both SMA20 and EMA20, indicating a bearish short‑term trend. Although RSI shows oversold conditions, the price is still under key moving averages and volatility is moderate. A 2% upside within the next 10 minutes is unlikely given recent consolidation and lack of bullish momentum. Holding preserves capital while we await a clear reversal signal.",
+          "timestamp": "2025-09-30T22:10:27.651001Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Current price below both SMA20 and EMA20, indicating a short‑term bearish trend. RSI is oversold but the volatility (ATR) and recent candle pattern show consolidation rather than a breakout. A 2% upside in the next 10 minutes is improbable given the lack of bullish momentum and the price staying under key moving averages. Holding preserves capital while we wait for a clear reversal signal.",
+          "timestamp": "2025-09-30T22:15:34.030410Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 90,
+          "explanation": "All short‑term indicators show a clear bearish bias. Price is below SMA20/EMA20, MACD is negative and below signal, RSI is under 40 with no upward trend, and Bollinger %B indicates a squeeze below the middle band. The 24‑hour change is -2.68%, reinforcing a downtrend. A quick 2% upside in the next 10 minutes is improbable; waiting for a reversal or break above key averages is safer. Holding preserves capital and aligns with past successful holds (9/9).",
+          "timestamp": "2025-09-30T22:21:01.949379Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
+        },
+        {
+          "symbol": "BNBUSDC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "All short‑term indicators confirm a bearish bias: price below SMA20/EMA20, MACD negative and under signal, RSI hovering near neutral but not yet in bullish territory. Recent candles show slight uptick but volatility remains low; a 2% swing within 10 minutes is unlikely. Historical hold decisions (9/9 successful) reinforce this conservative stance.",
+          "timestamp": "2025-09-30T22:25:15.427396Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271399999
+        }
+      ],
+      "last_decision": {
+        "symbol": "BNBUSDC",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 85,
+        "explanation": "All short‑term indicators confirm a bearish bias: price below SMA20/EMA20, MACD negative and under signal, RSI hovering near neutral but not yet in bullish territory. Recent candles show slight uptick but volatility remains low; a 2% swing within 10 minutes is unlikely. Historical hold decisions (9/9 successful) reinforce this conservative stance.",
+        "timestamp": "2025-09-30T22:25:15.427396Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271399999
+      },
+      "total_decisions": 11,
+      "buy_count": 0,
+      "sell_count": 0,
+      "hold_count": 11
+    },
+    "BNBETH": {
+      "symbol": "BNBETH",
+      "decisions": [
+        {
+          "symbol": "BNBETH",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "SMA below price and MACD negative suggest bearish bias; Bollinger squeeze indicates low volatility, likely a breakout soon but risk of pullback. Current price $0.2410 is below middle band; waiting for confirmation of breakout or reversal before committing to buy.",
+          "timestamp": "2025-09-30T21:35:32.847741Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BNBETH",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "SMA slightly above price indicates weak bullish bias, but RSI shows neutral to bearish momentum and MACD is below signal, indicating fading upward trend. Recent candles show minor uptrend but volatility low; risk of pullback high. Hold until clearer breakout or reversal confirmation.",
+          "timestamp": "2025-09-30T21:39:00.752134Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BNBETH",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "SMA just above price indicates slight bullish bias, but RSI 46.4 and MACD below signal suggest weakening momentum. Price is near recent high with low volatility; risk of pullback is moderate. No clear breakout yet. Hold until confirmation of upward move or trend reversal.",
+          "timestamp": "2025-09-30T21:54:09.619215Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "BNBETH",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "SMA20 just above price indicates short‑term bearish bias; RSI is neutral, MACD below signal not computed yet. Recent candles show weak downtrend and 1‑day % change -1.23%. No breakout yet. Hold until clear upward confirmation.",
+          "timestamp": "2025-09-30T21:57:44.130418Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
+        },
+        {
+          "symbol": "BNBETH",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Price is below both SMA20 and EMA20, MACD is below signal line indicating bearish momentum. RSI is in neutral but trending up; however the short‑term downtrend over last 5 candles and recent volume dips suggest a pause before a potential reversal. Given the goal of quick 2% gains, the current environment does not present a clear upward breakout. Holding keeps us positioned to capture any imminent rally while avoiding the risk of selling into a further dip.",
+          "timestamp": "2025-09-30T22:04:39.401084Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "BNBETH",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "SMA20 is slightly above price, MACD indicates bearish momentum with negative line below zero and below signal. Recent candles show small downtrend over 5 periods. No clear bullish breakout or RSI overbought. Given the goal of quick 2% gains, current conditions do not present a viable entry; better to hold and wait for reversal.",
+          "timestamp": "2025-09-30T22:08:09.022168Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "BNBETH",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "SMA20 is slightly above current price indicating bearish bias. Recent 5‑candle trend is downwards and RSI is neutral at 52, not strong enough for a quick 2% upside. No bullish MACD crossover or breakout pattern is visible. Past decisions have been hold, and the market conditions remain unchanged. Therefore, I recommend holding BNBETH until clearer bullish signals emerge.",
+          "timestamp": "2025-09-30T22:12:09.881066Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "BNBETH",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "SMA20 aligns with current price and RSI shows mild bullish momentum, but daily trend is down 1.6% and short‑term candles are bearish. No clear breakout or MACD crossover to trigger a 2% quick upside. Holding until a stronger bullish signal appears maximizes risk‑adjusted return.",
+          "timestamp": "2025-09-30T22:17:30.331164Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "BNBETH",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "Price remains above short‑term MA, RSI indicates mild bullishness, but daily trend is down 1.2% and no clear breakout. With insufficient balance for a meaningful position, the safest move is to hold until stronger reversal signals appear.",
+          "timestamp": "2025-09-30T22:22:54.035539Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
+        }
+      ],
+      "last_decision": {
+        "symbol": "BNBETH",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 75,
+        "explanation": "Price remains above short‑term MA, RSI indicates mild bullishness, but daily trend is down 1.2% and no clear breakout. With insufficient balance for a meaningful position, the safest move is to hold until stronger reversal signals appear.",
+        "timestamp": "2025-09-30T22:22:54.035539Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271099999
+      },
+      "total_decisions": 9,
+      "buy_count": 0,
+      "sell_count": 0,
+      "hold_count": 9
+    },
+    "XRPBTC": {
+      "symbol": "XRPBTC",
+      "decisions": [
+        {
+          "symbol": "XRPBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Price data is missing (all zeroes). Unable to confirm any trend or entry point. Holding until reliable price data is available.",
+          "timestamp": "2025-09-30T21:35:41.353602Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "XRPBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 70,
+          "explanation": "Price data is missing (all zeroes). Unable to confirm any trend or entry point. Holding until reliable price data is available.",
+          "timestamp": "2025-09-30T21:39:09.543030Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "XRPBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 95,
+          "explanation": "All price data for XRPBTC is zero, indicating a lack of reliable market information. Without current price, volume or trend data, any trade would be speculative and risk loss. The safest course is to hold until valid price feeds are available.",
+          "timestamp": "2025-09-30T21:54:44.912737Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "XRPBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 95,
+          "explanation": "Price feed for XRPBTC is currently zero; no reliable data to act on. Holding avoids speculative loss.",
+          "timestamp": "2025-09-30T21:57:49.155688Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
+        },
+        {
+          "symbol": "XRPBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 99,
+          "explanation": "XRPBTC is currently trading at 0.0000 across all candles, indicating a broken or inactive market feed. With no liquidity and zero price data, there is no basis for buying, selling, or any other action. The prudent approach is to hold until the pair becomes active again.",
+          "timestamp": "2025-09-30T22:05:10.168269Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "XRPBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 99,
+          "explanation": "Price feed shows zeros; market inactive. No actionable data. Hold until valid price appears.",
+          "timestamp": "2025-09-30T22:08:13.981167Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "XRPBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 99,
+          "explanation": "Market data shows zero price; likely temporary outage or inactive trading pair. No actionable trend, hold until valid price.",
+          "timestamp": "2025-09-30T22:12:17.358662Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "XRPBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 99,
+          "explanation": "Price data shows zero for XRPBTC, indicating an inactive or problematic trading pair. No actionable trend; maintain position.",
+          "timestamp": "2025-09-30T22:17:38.557431Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "XRPBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 99,
+          "explanation": "Price data shows zero for XRPBTC, indicating an inactive or problematic trading pair. No actionable trend; maintain position.",
+          "timestamp": "2025-09-30T22:22:58.838101Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
+        }
+      ],
+      "last_decision": {
+        "symbol": "XRPBTC",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 99,
+        "explanation": "Price data shows zero for XRPBTC, indicating an inactive or problematic trading pair. No actionable trend; maintain position.",
+        "timestamp": "2025-09-30T22:22:58.838101Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271099999
+      },
+      "total_decisions": 9,
+      "buy_count": 0,
+      "sell_count": 0,
+      "hold_count": 9
     },
     "ETHUSDT": {
       "symbol": "ETHUSDT",
@@ -55,7 +1061,8 @@
           "confidence": 75,
           "explanation": "Price above 20‑period SMA/EMA indicating bullish momentum, RSI approaching overbought but not yet; short‑term candles dip but likely rebound. Target 2% profit achievable within minutes.",
           "timestamp": "2025-09-30T21:13:47.896993Z",
-          "price_at_decision": null
+          "price_at_decision": null,
+          "price_timestamp": null
         },
         {
           "symbol": "ETHUSDT",
@@ -64,7 +1071,8 @@
           "confidence": 80,
           "explanation": "ETHUSDT remains above 20‑period SMA/EMA with bullish momentum. RSI is pulling back from overbought but still above 50, indicating a potential rebound. Recent candles show a short‑term dip; waiting for a clear breakout above the 20‑EMA will increase probability of a >2% move within minutes. Holding now maximizes entry quality.",
           "timestamp": "2025-09-30T21:15:12.111440Z",
-          "price_at_decision": null
+          "price_at_decision": null,
+          "price_timestamp": null
         },
         {
           "symbol": "ETHUSDT",
@@ -73,24 +1081,204 @@
           "confidence": 70,
           "explanation": "SMA & EMA20 bullish, price above both at 4185. Current RSI ~68 indicates still in uptrend but not overbought. Recent 5‑minute candles show a short‑term dip with highs approaching the EMA, signaling a potential breakout. A 2% move (~$84) is plausible within the next 10‑15 minutes given recent volatility and volume. Therefore, a BUY position maximizes entry quality while keeping risk low.",
           "timestamp": "2025-09-30T21:16:40.100287Z",
-          "price_at_decision": null
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "ETHUSDT",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "Short‑term trend is bearish: price sits below SMA20/EMA20 and recent 5‑minute candles show a dip. RSI at 52 is neutral, not overbought. Volatility remains moderate with volume steady. No clear breakout yet; best to hold and wait for a bullish reversal before committing.",
+          "timestamp": "2025-09-30T21:31:02.207317Z",
+          "price_at_decision": null,
+          "price_timestamp": null
         }
       ],
       "last_decision": {
         "symbol": "ETHUSDT",
-        "action": "BUY",
-        "amount": 0.5,
-        "confidence": 70,
-        "explanation": "SMA & EMA20 bullish, price above both at 4185. Current RSI ~68 indicates still in uptrend but not overbought. Recent 5‑minute candles show a short‑term dip with highs approaching the EMA, signaling a potential breakout. A 2% move (~$84) is plausible within the next 10‑15 minutes given recent volatility and volume. Therefore, a BUY position maximizes entry quality while keeping risk low.",
-        "timestamp": "2025-09-30T21:16:40.100287Z",
-        "price_at_decision": null
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 75,
+        "explanation": "Short‑term trend is bearish: price sits below SMA20/EMA20 and recent 5‑minute candles show a dip. RSI at 52 is neutral, not overbought. Volatility remains moderate with volume steady. No clear breakout yet; best to hold and wait for a bullish reversal before committing.",
+        "timestamp": "2025-09-30T21:31:02.207317Z",
+        "price_at_decision": null,
+        "price_timestamp": null
       },
-      "total_decisions": 3,
+      "total_decisions": 4,
       "buy_count": 2,
       "sell_count": 0,
-      "hold_count": 1
+      "hold_count": 2
+    },
+    "ETHBTC": {
+      "symbol": "ETHBTC",
+      "decisions": [
+        {
+          "symbol": "ETHBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Short‑term trend is down, MACD bearish crossover signals weakening momentum. RSI high but not extreme; moving averages are neutral. No clear upward breakout yet. Holding gives room for a quick rebound while avoiding a potential dip. 85% confidence to hold until clearer bullish signals appear.",
+          "timestamp": "2025-09-30T21:34:58.106948Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "ETHBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "SMA/EMA bearish, MACD below signal, RSI moving from overbought to neutral, short‑term trend down. No clear bullish breakout yet. Hold until a clean reversal or price breaks above the 20‑period averages.",
+          "timestamp": "2025-09-30T21:38:31.295609Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "ETHBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Short‑term trend remains down, price sits between SMA and EMA with EMA below SMA. RSI near neutral, MACD likely below signal. No breakout above 20‑period averages yet. Hold until a clear reversal or price crosses the EMA upward.",
+          "timestamp": "2025-09-30T21:53:44.038470Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269299999
+        },
+        {
+          "symbol": "ETHBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 75,
+          "explanation": "Short‑term candles show a brief uptick, but the price is stuck at the 20‑period SMA/EMA and RSI has fallen to 30, indicating weak momentum. No breakout above the 20‑period averages and MACD likely below signal. Hold until a clear reversal or EMA crossover occurs.",
+          "timestamp": "2025-09-30T21:57:21.848989Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269599999
+        },
+        {
+          "symbol": "ETHBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Current price at 0.0365 is below EMA/SMA, RSI ~34 indicates weak momentum; no clear reversal yet. Holding preserves capital until a bullish crossover or RSI >70 occurs, aligning with 2% target.",
+          "timestamp": "2025-09-30T22:04:07.967597Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759269899999
+        },
+        {
+          "symbol": "ETHBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Price is flat below both SMA and EMA, RSI 34 indicates weak bullish momentum. No crossover or breakout yet. Holding preserves capital until a clear reversal or RSI climbs above 70, aligning with our 2% target.",
+          "timestamp": "2025-09-30T22:07:40.754515Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270199999
+        },
+        {
+          "symbol": "ETHBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Price is consolidating below both SMA and EMA, RSI near neutral but slightly bearish. No bullish crossover or breakout. Holding preserves capital until a clear reversal that can yield >2% within minutes.",
+          "timestamp": "2025-09-30T22:11:48.643280Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270499999
+        },
+        {
+          "symbol": "ETHBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "Price remains below both SMA and EMA, RSI 33 indicates weak momentum. Short‑term candles show a brief uptick but no sustainable breakout. Holding preserves capital until a clear reversal that can deliver >2% in minutes.",
+          "timestamp": "2025-09-30T22:17:09.054538Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759270799999
+        },
+        {
+          "symbol": "ETHBTC",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 90,
+          "explanation": "Price is below both SMA and EMA, RSI around 37 indicating weak bullish momentum. Recent candles show a short‑term downtrend and no breakout. Holding preserves capital until a clear reversal that can deliver the required >2% gain within minutes.",
+          "timestamp": "2025-09-30T22:22:09.123993Z",
+          "price_at_decision": null,
+          "price_timestamp": 1759271099999
+        }
+      ],
+      "last_decision": {
+        "symbol": "ETHBTC",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 90,
+        "explanation": "Price is below both SMA and EMA, RSI around 37 indicating weak bullish momentum. Recent candles show a short‑term downtrend and no breakout. Holding preserves capital until a clear reversal that can deliver the required >2% gain within minutes.",
+        "timestamp": "2025-09-30T22:22:09.123993Z",
+        "price_at_decision": null,
+        "price_timestamp": 1759271099999
+      },
+      "total_decisions": 9,
+      "buy_count": 0,
+      "sell_count": 0,
+      "hold_count": 9
+    },
+    "BTCUSDT": {
+      "symbol": "BTCUSDT",
+      "decisions": [
+        {
+          "symbol": "BTCUSDT",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "SMA/EMA bullish but short‑term trend is down and RSI neutral. No clear entry for a 2% quick profit. Hold until clearer breakout.",
+          "timestamp": "2025-09-30T21:13:38.250581Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BTCUSDT",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "SMA20 still slightly above price, indicating short‑term bearish bias. EMA20 bullish but MACD remains below zero and histogram shows weak positive momentum. RSI is neutral at 52, no clear overbought/oversold reversal. The best strategy to achieve a 2% quick profit is to wait for a decisive breakout above the recent resistance near $114,400 before entering. Until then, hold to avoid a potential retracement.",
+          "timestamp": "2025-09-30T21:14:58.967551Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BTCUSDT",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Price sits above short‑term MA’s but MACD remains below zero and recent 5‑candle trend is down. RSI is mildly bullish but not strong enough for a quick 2% gain yet. Hold until a decisive breakout above the near‑term resistance (~$115k) confirms upward momentum.",
+          "timestamp": "2025-09-30T21:16:26.154737Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        },
+        {
+          "symbol": "BTCUSDT",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Short‑term indicators (price below SMA/EMA, RSI 43, recent downtrend) signal bearish bias. MACD above signal suggests potential reversal but not strong enough for a 2% quick move. Hold until clear breakout above $115k or MA crossover.",
+          "timestamp": "2025-09-30T21:30:51.180470Z",
+          "price_at_decision": null,
+          "price_timestamp": null
+        }
+      ],
+      "last_decision": {
+        "symbol": "BTCUSDT",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 80,
+        "explanation": "Short‑term indicators (price below SMA/EMA, RSI 43, recent downtrend) signal bearish bias. MACD above signal suggests potential reversal but not strong enough for a 2% quick move. Hold until clear breakout above $115k or MA crossover.",
+        "timestamp": "2025-09-30T21:30:51.180470Z",
+        "price_at_decision": null,
+        "price_timestamp": null
+      },
+      "total_decisions": 4,
+      "buy_count": 0,
+      "sell_count": 0,
+      "hold_count": 4
     }
   },
-  "last_updated": "2025-09-30T21:16:40.100306Z",
-  "total_runs": 3
+  "last_updated": "2025-09-30T22:25:40.520923Z",
+  "total_runs": 23
 }

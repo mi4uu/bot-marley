@@ -198,17 +198,37 @@ fn hold(pair: String, confidence: usize, explanation: String) -> String {
 
 // Helper function to execute buy order
 fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -> Result<String, Box<dyn std::error::Error>> {
+    info!("🔄 Attempting BUY order: {} {} at current market price", amount, pair);
+    
     // Get current price for transaction recording
-    let current_price = get_current_price(pair)?;
+    let current_price = match get_current_price(pair) {
+        Ok(price) => {
+            info!("💰 Current price for {}: ${:.4}", pair, price);
+            price
+        }
+        Err(e) => {
+            error!("❌ Failed to get current price for {}: {:?}", pair, e);
+            return Err(format!("Cannot get current price for {}: {}", pair, e).into());
+        }
+    };
     
     // Create a new account instance for trading
     let api_key = env::var("BINANCE_API_KEY")?;
     let secret_key = env::var("BINANCE_SECRET_KEY")?;
+    
+    info!("🔑 Using API key: {}...", &api_key[..8.min(api_key.len())]);
+    info!("🔐 Secret key configured: {}", if secret_key.len() > 0 { "Yes" } else { "No" });
+    
     let account: Account = Binance::new(Some(api_key), Some(secret_key));
+    
+    info!("📡 Placing market BUY order for {} {} on Binance...", amount, pair);
     
     // Create market buy order using the correct API
     match account.market_buy(pair, amount) {
         Ok(binance_transaction) => {
+            info!("✅ Binance API responded successfully");
+            info!("📋 Order details: ID={}, Status={}", binance_transaction.order_id, binance_transaction.status);
+            
             // Record transaction in our tracking system
             let tracker = get_transaction_tracker();
             if let Ok(mut tracker_guard) = tracker.lock() {
@@ -228,23 +248,52 @@ fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -
                 pair, amount, binance_transaction.order_id, binance_transaction.status, current_price
             ))
         }
-        Err(e) => Err(format!("Failed to place BUY order: {}", e).into())
+        Err(e) => {
+            error!("❌ Binance API error details: {:?}", e);
+            error!("❌ Error type: {}", std::any::type_name_of_val(&e));
+            
+            // Try to extract more detailed error information
+            let error_msg = format!("{:?}", e);
+            error!("❌ Full error debug: {}", error_msg);
+            
+            Err(format!("Failed to place BUY order for {} {}: {}", amount, pair, error_msg).into())
+        }
     }
 }
 
 // Helper function to execute sell order
 fn execute_sell_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -> Result<String, Box<dyn std::error::Error>> {
+    info!("🔄 Attempting SELL order: {} {} at current market price", amount, pair);
+    
     // Get current price for transaction recording
-    let current_price = get_current_price(pair)?;
+    let current_price = match get_current_price(pair) {
+        Ok(price) => {
+            info!("💰 Current price for {}: ${:.4}", pair, price);
+            price
+        }
+        Err(e) => {
+            error!("❌ Failed to get current price for {}: {:?}", pair, e);
+            return Err(format!("Cannot get current price for {}: {}", pair, e).into());
+        }
+    };
     
     // Create a new account instance for trading
     let api_key = env::var("BINANCE_API_KEY")?;
     let secret_key = env::var("BINANCE_SECRET_KEY")?;
+    
+    info!("🔑 Using API key: {}...", &api_key[..8.min(api_key.len())]);
+    info!("🔐 Secret key configured: {}", if secret_key.len() > 0 { "Yes" } else { "No" });
+    
     let account: Account = Binance::new(Some(api_key), Some(secret_key));
+    
+    info!("📡 Placing market SELL order for {} {} on Binance...", amount, pair);
     
     // Create market sell order using the correct API
     match account.market_sell(pair, amount) {
         Ok(binance_transaction) => {
+            info!("✅ Binance API responded successfully");
+            info!("📋 Order details: ID={}, Status={}", binance_transaction.order_id, binance_transaction.status);
+            
             // Record transaction in our tracking system
             let tracker = get_transaction_tracker();
             if let Ok(mut tracker_guard) = tracker.lock() {
@@ -265,6 +314,15 @@ fn execute_sell_order(pair: &str, amount: f64, _binance_client: &BinanceClient) 
                 pair, amount, binance_transaction.order_id, binance_transaction.status, current_price
             ))
         }
-        Err(e) => Err(format!("Failed to place SELL order: {}", e).into())
+        Err(e) => {
+            error!("❌ Binance API error details: {:?}", e);
+            error!("❌ Error type: {}", std::any::type_name_of_val(&e));
+            
+            // Try to extract more detailed error information
+            let error_msg = format!("{:?}", e);
+            error!("❌ Full error debug: {}", error_msg);
+            
+            Err(format!("Failed to place SELL order for {} {}: {}", amount, pair, error_msg).into())
+        }
     }
 }

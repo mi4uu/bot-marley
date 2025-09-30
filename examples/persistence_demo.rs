@@ -25,6 +25,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             explanation: "Strong bullish momentum with RSI oversold recovery".to_string(),
             timestamp: Utc::now(),
             price_at_decision: Some(45000.0),
+            price_timestamp: Some(1640995499999),
         },
         TradingDecision {
             symbol: "ETHUSDT".to_string(),
@@ -34,6 +35,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             explanation: "Consolidation phase, waiting for breakout".to_string(),
             timestamp: Utc::now(),
             price_at_decision: Some(3000.0),
+            price_timestamp: Some(1640995799999),
         },
         TradingDecision {
             symbol: "BTCUSDT".to_string(),
@@ -43,6 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             explanation: "Target reached, taking profits at resistance level".to_string(),
             timestamp: Utc::now(),
             price_at_decision: Some(46000.0),
+            price_timestamp: Some(1640996099999),
         },
     ];
 

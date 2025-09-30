@@ -14,6 +14,7 @@ pub struct TradingDecision {
     pub explanation: String,
     pub timestamp: DateTime<Utc>,
     pub price_at_decision: Option<f64>,
+    pub price_timestamp: Option<u64>, // Binance close_time timestamp for deduplication
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -82,6 +83,26 @@ impl TradingState {
     pub fn increment_runs(&mut self) {
         self.total_runs += 1;
         self.last_updated = Some(Utc::now());
+    }
+
+    /// Check if a decision already exists for the same symbol and price timestamp
+    pub fn has_decision_for_timestamp(&self, symbol: &str, price_timestamp: u64) -> bool {
+        if let Some(history) = self.symbols.get(symbol) {
+            history.decisions.iter().any(|decision| {
+                decision.price_timestamp == Some(price_timestamp)
+            })
+        } else {
+            false
+        }
+    }
+
+    /// Get the latest price timestamp for a symbol (if any decisions exist)
+    pub fn get_latest_price_timestamp(&self, symbol: &str) -> Option<u64> {
+        self.symbols.get(symbol)?
+            .decisions
+            .iter()
+            .filter_map(|d| d.price_timestamp)
+            .max()
     }
 
     pub fn generate_context_summary(&self, symbol: &str) -> String {
@@ -215,6 +236,7 @@ mod tests {
             explanation: "Strong bullish signal".to_string(),
             timestamp: Utc::now(),
             price_at_decision: Some(45000.0),
+            price_timestamp: Some(1640995499999),
         };
 
         state.add_decision(decision);

@@ -8,6 +8,7 @@ use mono_ai::{Message, MonoAI};
 use crate::config::Config;
 use crate::binance_client::BinanceClient;
 use crate::persistence::{PersistenceManager, TradingState, TradingDecision};
+use crate::tools::get_prices::fetch_klines_cached;
 
 const SYSTEM_MESSAGE: &'static str = r#"
 You are a professional crypto trader with years of market experience.
@@ -181,7 +182,42 @@ impl Bot {
         "✅ Binance API credentials configured. Account information retrieval is available.\n\n💡 The bot can access your account data for informed trading decisions.".to_string()
     }
 
+    /// Get the latest price timestamp for a symbol from Binance data
+    async fn get_latest_price_timestamp(&self, symbol: &str) -> Result<Option<u64>, Box<dyn std::error::Error>> {
+        // Fetch the latest kline data (just 1 candle to get the most recent timestamp)
+        match fetch_klines_cached(symbol, "5m", 1).await {
+            Ok(klines) => {
+                if let Some(latest_kline) = klines.last() {
+                    Ok(Some(latest_kline.close_time))
+                } else {
+                    Ok(None)
+                }
+            }
+            Err(e) => {
+                warn!("⚠️ Failed to fetch price timestamp for {}: {}", symbol, e);
+                Ok(None)
+            }
+        }
+    }
+
     pub async fn run_analysis_loop(&mut self, symbol: &str) -> Result<BotResult, Box<dyn std::error::Error>> {
+        // Check if we already made a decision for the current price timestamp
+        if let Ok(Some(current_price_timestamp)) = self.get_latest_price_timestamp(symbol).await {
+            if self.trading_state.has_decision_for_timestamp(symbol, current_price_timestamp) {
+                info!("⏭️ Skipping analysis for {} - decision already made for timestamp {}", symbol, current_price_timestamp);
+                return Ok(BotResult {
+                    decision: None,
+                    turns_used: 0,
+                    final_response: format!("Skipped: Decision already made for current price timestamp {}", current_price_timestamp),
+                    conversation_history: vec![],
+                });
+            } else {
+                info!("🆕 New price data for {} - timestamp: {}", symbol, current_price_timestamp);
+            }
+        } else {
+            warn!("⚠️ Could not get price timestamp for {}, proceeding with analysis", symbol);
+        }
+
         self.current_turn = 0;
         self.add_context_message(symbol);
 
@@ -265,6 +301,9 @@ impl Bot {
                                         confidence,
                                     });
                                     
+                                    // Get current price timestamp for deduplication
+                                    let price_timestamp = self.get_latest_price_timestamp(&pair).await.unwrap_or(None);
+                                    
                                     // Save trading decision to persistence
                                     let trading_decision = TradingDecision {
                                         symbol: pair,
@@ -274,6 +313,7 @@ impl Bot {
                                         explanation,
                                         timestamp: Utc::now(),
                                         price_at_decision: None, // TODO: Get current price
+                                        price_timestamp,
                                     };
                                     self.trading_state.add_decision(trading_decision);
                                 }
@@ -291,6 +331,9 @@ impl Bot {
                                         confidence,
                                     });
                                     
+                                    // Get current price timestamp for deduplication
+                                    let price_timestamp = self.get_latest_price_timestamp(&pair).await.unwrap_or(None);
+                                    
                                     // Save trading decision to persistence
                                     let trading_decision = TradingDecision {
                                         symbol: pair,
@@ -300,6 +343,7 @@ impl Bot {
                                         explanation,
                                         timestamp: Utc::now(),
                                         price_at_decision: None, // TODO: Get current price
+                                        price_timestamp,
                                     };
                                     self.trading_state.add_decision(trading_decision);
                                 }
@@ -315,6 +359,9 @@ impl Bot {
                                         confidence,
                                     });
                                     
+                                    // Get current price timestamp for deduplication
+                                    let price_timestamp = self.get_latest_price_timestamp(&pair).await.unwrap_or(None);
+                                    
                                     // Save trading decision to persistence
                                     let trading_decision = TradingDecision {
                                         symbol: pair,
@@ -324,6 +371,7 @@ impl Bot {
                                         explanation,
                                         timestamp: Utc::now(),
                                         price_at_decision: None, // TODO: Get current price
+                                        price_timestamp,
                                     };
                                     self.trading_state.add_decision(trading_decision);
                                 }
