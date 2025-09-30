@@ -231,93 +231,10 @@ impl Bot {
             if let Some(ref tc) = tool_calls {
                 info!("\n🔧 Executing tools...");
                 
-                // Check if any tool call is a trading decision
-                for tool_call in tc {
-                    match tool_call.function.name.as_str() {
-                        "buy" => {
-                            if let Ok(args) = serde_json::from_str::<serde_json::Value>(&tool_call.function.arguments.to_string()) {
-                                let pair = args["pair"].as_str().unwrap_or(symbol).to_string();
-                                let amount = args["amount"].as_f64().unwrap_or(0.0);
-                                let confidence = args["confidence"].as_u64().unwrap_or(0) as usize;
-                                let explanation = args["explanation"].as_str().unwrap_or("").to_string();
-                                
-                                final_decision = Some(BotDecision::Buy {
-                                    pair: pair.clone(),
-                                    amount,
-                                    confidence,
-                                });
-                                
-                                // Save trading decision to persistence
-                                let trading_decision = TradingDecision {
-                                    symbol: pair,
-                                    action: "BUY".to_string(),
-                                    amount: Some(amount),
-                                    confidence,
-                                    explanation,
-                                    timestamp: Utc::now(),
-                                    price_at_decision: None, // TODO: Get current price
-                                };
-                                self.trading_state.add_decision(trading_decision);
-                            }
-                        }
-                        "sell" => {
-                            if let Ok(args) = serde_json::from_str::<serde_json::Value>(&tool_call.function.arguments.to_string()) {
-                                let pair = args["pair"].as_str().unwrap_or(symbol).to_string();
-                                let amount = args["amount"].as_f64().unwrap_or(0.0);
-                                let confidence = args["confidence"].as_u64().unwrap_or(0) as usize;
-                                let explanation = args["explanation"].as_str().unwrap_or("").to_string();
-                                
-                                final_decision = Some(BotDecision::Sell {
-                                    pair: pair.clone(),
-                                    amount,
-                                    confidence,
-                                });
-                                
-                                // Save trading decision to persistence
-                                let trading_decision = TradingDecision {
-                                    symbol: pair,
-                                    action: "SELL".to_string(),
-                                    amount: Some(amount),
-                                    confidence,
-                                    explanation,
-                                    timestamp: Utc::now(),
-                                    price_at_decision: None, // TODO: Get current price
-                                };
-                                self.trading_state.add_decision(trading_decision);
-                            }
-                        }
-                        "hold" => {
-                            if let Ok(args) = serde_json::from_str::<serde_json::Value>(&tool_call.function.arguments.to_string()) {
-                                let pair = args["pair"].as_str().unwrap_or(symbol).to_string();
-                                let confidence = args["confidence"].as_u64().unwrap_or(0) as usize;
-                                let explanation = args["explanation"].as_str().unwrap_or("").to_string();
-                                
-                                final_decision = Some(BotDecision::Hold {
-                                    pair: pair.clone(),
-                                    confidence,
-                                });
-                                
-                                // Save trading decision to persistence
-                                let trading_decision = TradingDecision {
-                                    symbol: pair,
-                                    action: "HOLD".to_string(),
-                                    amount: None,
-                                    confidence,
-                                    explanation,
-                                    timestamp: Utc::now(),
-                                    price_at_decision: None, // TODO: Get current price
-                                };
-                                self.trading_state.add_decision(trading_decision);
-                            }
-                        }
-                        _ => {}
-                    }
-                }
-
-                // Execute tool calls
+                // Execute tool calls first
                 let tool_responses = self.ai.handle_tool_calls(tc.clone()).await;
                 
-                // Show tool results
+                // Check if any tool call was a successful trading decision
                 for (tool_call, response) in tc.iter().zip(tool_responses.iter()) {
                     let clean_result = if response.content.starts_with("TOOL_RESULT:") {
                         let parts: Vec<&str> = response.content.splitn(3, ':').collect();
@@ -329,12 +246,96 @@ impl Bot {
                     } else {
                         &response.content
                     };
+                    
                     info!("✅ {} executed: {}", tool_call.function.name, clean_result);
+                    
+                    // Only record decision if the tool execution was successful (starts with ✅)
+                    if clean_result.starts_with("✅") {
+                        match tool_call.function.name.as_str() {
+                            "buy" => {
+                                if let Ok(args) = serde_json::from_str::<serde_json::Value>(&tool_call.function.arguments.to_string()) {
+                                    let pair = args["pair"].as_str().unwrap_or(symbol).to_string();
+                                    let amount = args["amount"].as_f64().unwrap_or(0.0);
+                                    let confidence = args["confidence"].as_u64().unwrap_or(0) as usize;
+                                    let explanation = args["explanation"].as_str().unwrap_or("").to_string();
+                                    
+                                    final_decision = Some(BotDecision::Buy {
+                                        pair: pair.clone(),
+                                        amount,
+                                        confidence,
+                                    });
+                                    
+                                    // Save trading decision to persistence
+                                    let trading_decision = TradingDecision {
+                                        symbol: pair,
+                                        action: "BUY".to_string(),
+                                        amount: Some(amount),
+                                        confidence,
+                                        explanation,
+                                        timestamp: Utc::now(),
+                                        price_at_decision: None, // TODO: Get current price
+                                    };
+                                    self.trading_state.add_decision(trading_decision);
+                                }
+                            }
+                            "sell" => {
+                                if let Ok(args) = serde_json::from_str::<serde_json::Value>(&tool_call.function.arguments.to_string()) {
+                                    let pair = args["pair"].as_str().unwrap_or(symbol).to_string();
+                                    let amount = args["amount"].as_f64().unwrap_or(0.0);
+                                    let confidence = args["confidence"].as_u64().unwrap_or(0) as usize;
+                                    let explanation = args["explanation"].as_str().unwrap_or("").to_string();
+                                    
+                                    final_decision = Some(BotDecision::Sell {
+                                        pair: pair.clone(),
+                                        amount,
+                                        confidence,
+                                    });
+                                    
+                                    // Save trading decision to persistence
+                                    let trading_decision = TradingDecision {
+                                        symbol: pair,
+                                        action: "SELL".to_string(),
+                                        amount: Some(amount),
+                                        confidence,
+                                        explanation,
+                                        timestamp: Utc::now(),
+                                        price_at_decision: None, // TODO: Get current price
+                                    };
+                                    self.trading_state.add_decision(trading_decision);
+                                }
+                            }
+                            "hold" => {
+                                if let Ok(args) = serde_json::from_str::<serde_json::Value>(&tool_call.function.arguments.to_string()) {
+                                    let pair = args["pair"].as_str().unwrap_or(symbol).to_string();
+                                    let confidence = args["confidence"].as_u64().unwrap_or(0) as usize;
+                                    let explanation = args["explanation"].as_str().unwrap_or("").to_string();
+                                    
+                                    final_decision = Some(BotDecision::Hold {
+                                        pair: pair.clone(),
+                                        confidence,
+                                    });
+                                    
+                                    // Save trading decision to persistence
+                                    let trading_decision = TradingDecision {
+                                        symbol: pair,
+                                        action: "HOLD".to_string(),
+                                        amount: None,
+                                        confidence,
+                                        explanation,
+                                        timestamp: Utc::now(),
+                                        price_at_decision: None, // TODO: Get current price
+                                    };
+                                    self.trading_state.add_decision(trading_decision);
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
                 }
                 
                 self.messages.extend(tool_responses);
 
-                // If a trading decision was made, save state and break the loop
+                // Only break the loop if a successful trading decision was made
                 if final_decision.is_some() {
                     info!("🎯 Final trading decision made!");
                     

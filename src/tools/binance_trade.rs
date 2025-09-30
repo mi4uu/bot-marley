@@ -2,11 +2,23 @@ use mono_ai_macros::tool;
 use tracing::{info, warn, error};
 use crate::binance_client::BinanceClient;
 use crate::config::Config;
+use crate::transaction_tracker::TransactionTracker;
 use binance::api::*;
 use binance::account::*;
 use reqwest::Client;
 use serde_json::Value;
 use std::env;
+use std::sync::Mutex;
+use std::sync::OnceLock;
+
+// Global transaction tracker
+static TRANSACTION_TRACKER: OnceLock<Mutex<TransactionTracker>> = OnceLock::new();
+
+fn get_transaction_tracker() -> &'static Mutex<TransactionTracker> {
+    TRANSACTION_TRACKER.get_or_init(|| {
+        Mutex::new(TransactionTracker::new("data/transactions.jsonl"))
+    })
+}
 
 // Helper function to get current price for USD value calculation using HTTP API
 async fn get_current_price_async(symbol: &str) -> Result<f64, Box<dyn std::error::Error>> {
@@ -186,6 +198,9 @@ fn hold(pair: String, confidence: usize, explanation: String) -> String {
 
 // Helper function to execute buy order
 fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -> Result<String, Box<dyn std::error::Error>> {
+    // Get current price for transaction recording
+    let current_price = get_current_price(pair)?;
+    
     // Create a new account instance for trading
     let api_key = env::var("BINANCE_API_KEY")?;
     let secret_key = env::var("BINANCE_SECRET_KEY")?;
@@ -193,10 +208,24 @@ fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -
     
     // Create market buy order using the correct API
     match account.market_buy(pair, amount) {
-        Ok(transaction) => {
+        Ok(binance_transaction) => {
+            // Record transaction in our tracking system
+            let tracker = get_transaction_tracker();
+            if let Ok(mut tracker_guard) = tracker.lock() {
+                match tracker_guard.record_buy_transaction(pair, amount, current_price, current_price) {
+                    Ok(transaction) => {
+                        info!("📊 Transaction recorded: BUY {} {} at ${:.4} (Total: ${:.2})",
+                              transaction.amount, transaction.asset, transaction.price_per_unit, transaction.amount_in_usd);
+                    }
+                    Err(e) => {
+                        warn!("⚠️ Failed to record transaction: {}", e);
+                    }
+                }
+            }
+            
             Ok(format!(
-                "Market BUY order placed - Symbol: {}, Quantity: {}, Order ID: {}, Status: {}",
-                pair, amount, transaction.order_id, transaction.status
+                "Market BUY order placed - Symbol: {}, Quantity: {}, Order ID: {}, Status: {}, Price: ${:.4}",
+                pair, amount, binance_transaction.order_id, binance_transaction.status, current_price
             ))
         }
         Err(e) => Err(format!("Failed to place BUY order: {}", e).into())
@@ -205,6 +234,9 @@ fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -
 
 // Helper function to execute sell order
 fn execute_sell_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -> Result<String, Box<dyn std::error::Error>> {
+    // Get current price for transaction recording
+    let current_price = get_current_price(pair)?;
+    
     // Create a new account instance for trading
     let api_key = env::var("BINANCE_API_KEY")?;
     let secret_key = env::var("BINANCE_SECRET_KEY")?;
@@ -212,10 +244,25 @@ fn execute_sell_order(pair: &str, amount: f64, _binance_client: &BinanceClient) 
     
     // Create market sell order using the correct API
     match account.market_sell(pair, amount) {
-        Ok(transaction) => {
+        Ok(binance_transaction) => {
+            // Record transaction in our tracking system
+            let tracker = get_transaction_tracker();
+            if let Ok(mut tracker_guard) = tracker.lock() {
+                match tracker_guard.record_sell_transaction(pair, amount, current_price, current_price) {
+                    Ok(transaction) => {
+                        info!("📊 Transaction recorded: SELL {} {} at ${:.4} (Profit: ${:.2}, {:.1}%)",
+                              transaction.amount, transaction.asset, transaction.price_per_unit,
+                              transaction.profit_in_usd, transaction.profit_percent);
+                    }
+                    Err(e) => {
+                        warn!("⚠️ Failed to record transaction: {}", e);
+                    }
+                }
+            }
+            
             Ok(format!(
-                "Market SELL order placed - Symbol: {}, Quantity: {}, Order ID: {}, Status: {}",
-                pair, amount, transaction.order_id, transaction.status
+                "Market SELL order placed - Symbol: {}, Quantity: {}, Order ID: {}, Status: {}, Price: ${:.4}",
+                pair, amount, binance_transaction.order_id, binance_transaction.status, current_price
             ))
         }
         Err(e) => Err(format!("Failed to place SELL order: {}", e).into())

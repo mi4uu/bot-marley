@@ -1,0 +1,2 @@
+{"date":"2025-09-30","time":"21:30:00","asset":"BTC","pair":"BTCUSDT","transaction_type":"BUY","amount":0.001,"price_per_unit":67500.0,"amount_in_usd":67.5,"profit":0.0,"profit_in_usd":0.0,"profit_percent":0.0,"total_asset":0.001,"total_asset_worth_usd":67.5}
+{"date":"2025-09-30","time":"21:35:00","asset":"BTC","pair":"BTCUSDT","transaction_type":"SELL","amount":0.001,"price_per_unit":68000.0,"amount_in_usd":68.0,"profit":500.0,"profit_in_usd":0.5,"profit_percent":0.74,"total_asset":0.0,"total_asset_worth_usd":0.0}
