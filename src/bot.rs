@@ -1,5 +1,6 @@
 use std::sync::Arc;
 use futures_util::StreamExt;
+use tracing::{info, debug, warn};
 
 use mono_ai::{Message, MonoAI};
 
@@ -166,7 +167,7 @@ impl Bot {
         while self.current_turn < self.config.bot_max_turns {
             self.current_turn += 1;
             
-            println!("🤖 Turn {}/{} - Analyzing {}...",
+            info!("🤖 Turn {}/{} - Analyzing {}...",
                 self.current_turn, self.config.bot_max_turns, symbol);
 
             // Send chat request and handle streaming response
@@ -179,7 +180,7 @@ impl Bot {
                 let item = item.map_err(|e| format!("Stream error: {}", e))?;
                 
                 if !item.content.is_empty() {
-                    print!("{}", item.content);
+                    debug!("AI response chunk: {}", item.content);
                     full_response.push_str(&item.content);
                 }
                 
@@ -204,7 +205,7 @@ impl Bot {
 
             // Handle tool calls if present
             if let Some(ref tc) = tool_calls {
-                println!("\n🔧 Executing tools...");
+                info!("\n🔧 Executing tools...");
                 
                 // Check if any tool call is a trading decision
                 for tool_call in tc {
@@ -254,14 +255,14 @@ impl Bot {
                     } else {
                         &response.content
                     };
-                    println!("✅ {} executed: {}", tool_call.function.name, clean_result);
+                    info!("✅ {} executed: {}", tool_call.function.name, clean_result);
                 }
                 
                 self.messages.extend(tool_responses);
 
                 // If a trading decision was made, break the loop
                 if final_decision.is_some() {
-                    println!("🎯 Final trading decision made!");
+                    info!("🎯 Final trading decision made!");
                     break;
                 }
 
@@ -282,7 +283,7 @@ impl Bot {
                 }
             } else if self.current_turn >= self.config.bot_max_turns {
                 // Force a decision if max turns reached
-                println!("⏰ Max turns reached, forcing decision...");
+                warn!("⏰ Max turns reached, forcing decision...");
                 let force_decision_msg = format!(
                     "You have reached the maximum number of turns ({}). You must make a final trading decision NOW. Choose BUY, SELL, or HOLD for {} and execute the corresponding tool.",
                     self.config.bot_max_turns, symbol

@@ -1,16 +1,40 @@
 use std::time::Duration;
 use botmarley::bot::Bot;
+use tracing::{info, error};
+use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing_appender::rolling;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("🚀 BotMarley - Crypto Trading Bot");
+    // Initialize tracing with JSON file logging (hourly rotation)
+    let file_appender = rolling::hourly("logs", "botmarley.log");
+    let (non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
+    
+    tracing_subscriber::registry()
+        .with(
+            fmt::layer()
+                .with_writer(non_blocking)
+                .json()
+                .with_current_span(false)
+                .with_span_list(true)
+        )
+        .with(
+            fmt::layer()
+                .with_writer(std::io::stdout)
+                .with_ansi(true)
+                .compact()
+        )
+        .with(EnvFilter::from_default_env().add_directive("botmarley=info".parse()?))
+        .init();
+
+    info!("🚀 BotMarley - Crypto Trading Bot");
     dotenv::dotenv()?;
     
     let config = botmarley::config::Config::load();
-    println!("📊 Config loaded:");
-    println!("  - Max turns: {}", config.bot_max_turns);
-    println!("  - Trading pairs: {:?}", config.pairs());
-    println!("  - Model: {}", config.openai_model);
+    info!("📊 Config loaded:");
+    info!("  - Max turns: {}", config.bot_max_turns);
+    info!("  - Trading pairs: {:?}", config.pairs());
+    info!("  - Model: {}", config.openai_model);
     
     // Create bot instance
     let mut bot = Bot::new(config).await?
@@ -18,42 +42,42 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     // Test symbols to analyze
     let test_symbols = vec!["BTCUSDT", "ETHUSDT"];
-    
-    for symbol in test_symbols {
-        println!("\n{}", "=".repeat(60));
-        println!("🎯 Starting analysis for {}", symbol);
-        println!("{}", "=".repeat(60));
-        
-        // Run the analysis loop
-        match bot.run_analysis_loop(symbol).await {
-            Ok(result) => {
-                println!("\n📈 Analysis Complete for {}!", symbol);
-                println!("  - Turns used: {}/{}", result.turns_used, bot.get_max_turns());
-                
-                match result.decision {
-                    Some(decision) => {
-                        println!("  - Decision: {:?}", decision);
+    loop{
+        for symbol in test_symbols.clone() {
+            println!("\n{}", "=".repeat(60));
+            info!("🎯 Starting analysis for {}", symbol);
+            println!("{}", "=".repeat(60));
+            
+            // Run the analysis loop
+            match bot.run_analysis_loop(symbol).await {
+                Ok(result) => {
+                    info!("\n📈 Analysis Complete for {}!", symbol);
+                    info!("  - Turns used: {}/{}", result.turns_used, bot.get_max_turns());
+                    
+                    match result.decision {
+                        Some(decision) => {
+                            info!("  - Decision: {:?}", decision);
+                        }
+                        None => {
+                            info!("  - No final decision made within turn limit");
+                        }
                     }
-                    None => {
-                        println!("  - No final decision made within turn limit");
-                    }
+                    
+                    info!("  - Final response length: {} chars", result.final_response.len());
                 }
-                
-                println!("  - Final response length: {} chars", result.final_response.len());
+                Err(e) => {
+                    error!("❌ Error analyzing {}: {}", symbol, e);
+                }
             }
-            Err(e) => {
-                println!("❌ Error analyzing {}: {}", symbol, e);
-            }
+            
+            // Reset for next symbol
+            bot.reset_conversation();
+            
+
         }
         
-        // Reset for next symbol
-        bot.reset_conversation();
-        
-        // Wait between analyses
-        println!("\n⏳ Waiting 5 seconds before next analysis...");
-        tokio::time::sleep(Duration::from_secs(5)).await;
+        info!("\n✅ All analyses completed! wait 1 minute");
+    tokio::time::sleep(Duration::from_mins(1)).await;
     }
-    
-    println!("\n✅ All analyses completed!");
     Ok(())
 }

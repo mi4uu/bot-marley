@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use tokio::sync::OnceCell;
+use tracing::{info, debug};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Kline {
@@ -104,13 +105,13 @@ pub async fn fetch_klines_cached(symbol: &str, interval: &str, limit: u32) -> Re
         let cache_guard = cache.lock().unwrap();
         if let Some(cached_data) = cache_guard.get(&cache_key) {
             if !cached_data.is_expired(cache_duration) {
-                println!("📋 Using cached data for {}", symbol);
+                info!("📋 Using cached data for {}", symbol);
                 return Ok(cached_data.klines.clone());
             }
         }
     }
 
-    println!("🌐 Fetching fresh data for {} from Binance API", symbol);
+    info!("🌐 Fetching fresh data for {} from Binance API", symbol);
     
     // Fetch fresh data
     let client = Client::new();
