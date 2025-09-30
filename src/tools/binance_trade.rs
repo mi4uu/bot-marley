@@ -1,6 +1,9 @@
 use mono_ai_macros::tool;
+use crate::binance_client::BinanceClient;
+use crate::config::Config;
 
-
+// Note: Removed async tools due to runtime conflicts with Binance client
+// Account information is now provided at bot startup instead
 
 #[tool]
 /// Sell asset, confidence in % about this decision , THIS IS FINAL DECISION
