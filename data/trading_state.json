@@ -1,0 +1,96 @@
+{
+  "symbols": {
+    "BTCUSDT": {
+      "symbol": "BTCUSDT",
+      "decisions": [
+        {
+          "symbol": "BTCUSDT",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "SMA/EMA bullish but short‑term trend is down and RSI neutral. No clear entry for a 2% quick profit. Hold until clearer breakout.",
+          "timestamp": "2025-09-30T21:13:38.250581Z",
+          "price_at_decision": null
+        },
+        {
+          "symbol": "BTCUSDT",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 85,
+          "explanation": "SMA20 still slightly above price, indicating short‑term bearish bias. EMA20 bullish but MACD remains below zero and histogram shows weak positive momentum. RSI is neutral at 52, no clear overbought/oversold reversal. The best strategy to achieve a 2% quick profit is to wait for a decisive breakout above the recent resistance near $114,400 before entering. Until then, hold to avoid a potential retracement.",
+          "timestamp": "2025-09-30T21:14:58.967551Z",
+          "price_at_decision": null
+        },
+        {
+          "symbol": "BTCUSDT",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "Price sits above short‑term MA’s but MACD remains below zero and recent 5‑candle trend is down. RSI is mildly bullish but not strong enough for a quick 2% gain yet. Hold until a decisive breakout above the near‑term resistance (~$115k) confirms upward momentum.",
+          "timestamp": "2025-09-30T21:16:26.154737Z",
+          "price_at_decision": null
+        }
+      ],
+      "last_decision": {
+        "symbol": "BTCUSDT",
+        "action": "HOLD",
+        "amount": null,
+        "confidence": 80,
+        "explanation": "Price sits above short‑term MA’s but MACD remains below zero and recent 5‑candle trend is down. RSI is mildly bullish but not strong enough for a quick 2% gain yet. Hold until a decisive breakout above the near‑term resistance (~$115k) confirms upward momentum.",
+        "timestamp": "2025-09-30T21:16:26.154737Z",
+        "price_at_decision": null
+      },
+      "total_decisions": 3,
+      "buy_count": 0,
+      "sell_count": 0,
+      "hold_count": 3
+    },
+    "ETHUSDT": {
+      "symbol": "ETHUSDT",
+      "decisions": [
+        {
+          "symbol": "ETHUSDT",
+          "action": "BUY",
+          "amount": 0.1,
+          "confidence": 75,
+          "explanation": "Price above 20‑period SMA/EMA indicating bullish momentum, RSI approaching overbought but not yet; short‑term candles dip but likely rebound. Target 2% profit achievable within minutes.",
+          "timestamp": "2025-09-30T21:13:47.896993Z",
+          "price_at_decision": null
+        },
+        {
+          "symbol": "ETHUSDT",
+          "action": "HOLD",
+          "amount": null,
+          "confidence": 80,
+          "explanation": "ETHUSDT remains above 20‑period SMA/EMA with bullish momentum. RSI is pulling back from overbought but still above 50, indicating a potential rebound. Recent candles show a short‑term dip; waiting for a clear breakout above the 20‑EMA will increase probability of a >2% move within minutes. Holding now maximizes entry quality.",
+          "timestamp": "2025-09-30T21:15:12.111440Z",
+          "price_at_decision": null
+        },
+        {
+          "symbol": "ETHUSDT",
+          "action": "BUY",
+          "amount": 0.5,
+          "confidence": 70,
+          "explanation": "SMA & EMA20 bullish, price above both at 4185. Current RSI ~68 indicates still in uptrend but not overbought. Recent 5‑minute candles show a short‑term dip with highs approaching the EMA, signaling a potential breakout. A 2% move (~$84) is plausible within the next 10‑15 minutes given recent volatility and volume. Therefore, a BUY position maximizes entry quality while keeping risk low.",
+          "timestamp": "2025-09-30T21:16:40.100287Z",
+          "price_at_decision": null
+        }
+      ],
+      "last_decision": {
+        "symbol": "ETHUSDT",
+        "action": "BUY",
+        "amount": 0.5,
+        "confidence": 70,
+        "explanation": "SMA & EMA20 bullish, price above both at 4185. Current RSI ~68 indicates still in uptrend but not overbought. Recent 5‑minute candles show a short‑term dip with highs approaching the EMA, signaling a potential breakout. A 2% move (~$84) is plausible within the next 10‑15 minutes given recent volatility and volume. Therefore, a BUY position maximizes entry quality while keeping risk low.",
+        "timestamp": "2025-09-30T21:16:40.100287Z",
+        "price_at_decision": null
+      },
+      "total_decisions": 3,
+      "buy_count": 2,
+      "sell_count": 0,
+      "hold_count": 1
+    }
+  },
+  "last_updated": "2025-09-30T21:16:40.100306Z",
+  "total_runs": 3
+}
