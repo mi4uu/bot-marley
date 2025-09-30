@@ -178,6 +178,7 @@ dependencies = [
  "binance",
  "dotenv",
  "envy",
+ "financial_indicators",
  "futures-util",
  "mono-ai",
  "mono-ai-macros",
@@ -398,6 +399,12 @@ name = "fastrand"
 version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
+
+[[package]]
+name = "financial_indicators"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "375166f0cab84599723b60e54bf76283efefa03fa8042d84e1a7bef04d055994"
 
 [[package]]
 name = "find-msvc-tools"
@@ -1275,7 +1282,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash",
  "rustls",
- "socket2 0.5.10",
+ "socket2 0.6.0",
  "thiserror 2.0.17",
  "tokio",
  "tracing",
@@ -1312,9 +1319,9 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.5.10",
+ "socket2 0.6.0",
  "tracing",
- "windows-sys 0.52.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]

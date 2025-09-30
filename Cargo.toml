@@ -20,3 +20,4 @@ mono-ai = {path = "crates/mono-ai"}
 mono-ai-macros = {path = "crates/mono-ai/macros"}
 reqwest = { version = "0.12.19", features = ["json",  "blocking","rustls-tls"] }
 futures-util = "0.3.31"
+financial_indicators = "1.0.0"

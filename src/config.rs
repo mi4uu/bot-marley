@@ -1,3 +1,5 @@
+use std::default;
+
 use serde::{Deserialize, Serialize};
 use smart_default::SmartDefault;
 use tracing_subscriber::fmt::format;
@@ -10,7 +12,7 @@ pub struct Config{
  pub   binance_api_key:String,
     #[default = "noop"]
  pub    binance_secret_key:String,
-    #[default = "http://localhost:1234/v1"]
+    #[default = "http://localhost:1234"]
   pub  openai_base_url:String,
     #[default = "noop"]
 pub    openai_api_key:String,
@@ -24,7 +26,9 @@ pub    max_trade_value:usize,
  pub   web_ui_port:usize,
     allowed_pairs:String,
     #[default = "5m"]
-   pub trading_interval:String
+   pub trading_interval:String,
+   #[default = 30]
+   pub bot_max_turns:usize
 
 }
 
