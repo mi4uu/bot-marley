@@ -109,9 +109,11 @@ impl Bot {
     }
 
     pub fn add_system_message(mut self) -> Self {
+        let sell_limit:f64=self.config.max_trade_value as f64;
+        let sell_limit=sell_limit*1.1;
         self.messages.push(Message {
             role: "system".into(),
-            content: SYSTEM_MESSAGE.into(),
+            content: format!("{}\n\nRESTRICTIONS:\n- max buy for amount equal to {} usd\n- max sell for amount equal to {} usd\n - max active orders: {}",SYSTEM_MESSAGE, self.config.max_trade_value, sell_limit, self.config.max_active_orders) ,
             images: None,
             tool_calls: None,
         });
