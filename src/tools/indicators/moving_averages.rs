@@ -133,7 +133,11 @@ pub fn calculate_moving_averages(symbol: String, period: Option<String>) -> Stri
         .and_then(|p| p.parse::<u32>().ok())
         .unwrap_or(20) as usize;
     
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
+    
     rt.block_on(async {
         match get_klines_for_indicators(&symbol, "5m", 100).await {
             Ok(klines) => {
@@ -146,6 +150,7 @@ pub fn calculate_moving_averages(symbol: String, period: Option<String>) -> Stri
                 format_ma_analysis(&closes, &sma_values, &ema_values, &wma_values, &symbol, period)
             }
             Err(e) => {
+                tracing::error!("Failed to fetch price data for moving averages: {}", e);
                 format!("❌ Error fetching price data for {}: {}", symbol, e)
             }
         }
@@ -159,7 +164,11 @@ pub fn calculate_sma_indicator(symbol: String, period: Option<String>) -> String
         .and_then(|p| p.parse::<u32>().ok())
         .unwrap_or(20) as usize;
     
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
+    
     rt.block_on(async {
         match get_klines_for_indicators(&symbol, "5m", 100).await {
             Ok(klines) => {
@@ -177,6 +186,7 @@ pub fn calculate_sma_indicator(symbol: String, period: Option<String>) -> String
                 }
             }
             Err(e) => {
+                tracing::error!("Failed to fetch price data for SMA calculation: {}", e);
                 format!("❌ Error fetching price data for {}: {}", symbol, e)
             }
         }
@@ -190,7 +200,11 @@ pub fn calculate_ema_indicator(symbol: String, period: Option<String>) -> String
         .and_then(|p| p.parse::<u32>().ok())
         .unwrap_or(20) as usize;
     
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
+    
     rt.block_on(async {
         match get_klines_for_indicators(&symbol, "5m", 100).await {
             Ok(klines) => {
@@ -208,6 +222,7 @@ pub fn calculate_ema_indicator(symbol: String, period: Option<String>) -> String
                 }
             }
             Err(e) => {
+                tracing::error!("Failed to fetch price data for EMA calculation: {}", e);
                 format!("❌ Error fetching price data for {}: {}", symbol, e)
             }
         }

@@ -28,13 +28,29 @@ async fn get_current_price_async(symbol: &str) -> Result<f64, Box<dyn std::error
     let response = client
         .get(&url)
         .send()
-        .await?
+        .await
+        .map_err(|e| format!("Failed to send request to Binance API: {}", e))?
         .json::<Value>()
-        .await?;
+        .await
+        .map_err(|e| format!("Failed to parse JSON response from Binance API: {}", e))?;
     
-    let price_str = response["price"].as_str()
-        .ok_or("Price not found in response")?;
-    let price: f64 = price_str.parse()?;
+    // Handle potential null values in the response
+    let price_str = match response.get("price") {
+        Some(price_value) => {
+            match price_value.as_str() {
+                Some(price_str) => price_str,
+                None => {
+                    return Err(format!("Price field is not a string: {:?}", price_value).into());
+                }
+            }
+        }
+        None => {
+            return Err("Price field not found in response".into());
+        }
+    };
+    
+    let price: f64 = price_str.parse()
+        .map_err(|e| format!("Failed to parse price '{}': {}", price_str, e))?;
     
     Ok(price)
 }
@@ -147,9 +163,9 @@ fn sell(pair: String, amount: f64, confidence: usize, explanation: String) -> St
 #[tool]
 /// Buy asset, confidence in % about this decision, THIS IS FINAL DECISION
 fn buy(pair: String, amount: f64, confidence: usize, explanation: String) -> String {
-    info!("FINAL DECISION: BUY 🛍️");
-    info!("CONFIDENCE: {} %", confidence);
-    info!("EXPLANATION: {}", explanation);
+    info!(target=&pair, "FINAL DECISION: BUY 🛍️");
+    info!(target=&pair,"CONFIDENCE: {} %", confidence);
+    info!(target=&pair,"EXPLANATION: {}", explanation);
     
     // Load config
     let config = Config::load();
@@ -167,7 +183,7 @@ fn buy(pair: String, amount: f64, confidence: usize, explanation: String) -> Str
     // Validate trade restrictions
     if let Err(e) = validate_trade_restrictions(&pair, amount, true, &config, &binance_client) {
         let error_msg = format!("❌ BUY validation failed: {}", e);
-        warn!("{}", error_msg);
+        warn!(target=&pair, "{}", error_msg);
         return error_msg;
     }
     
@@ -175,12 +191,12 @@ fn buy(pair: String, amount: f64, confidence: usize, explanation: String) -> Str
     match execute_buy_order(&pair, amount, &binance_client) {
         Ok(result) => {
             let success_msg = format!("✅ BUY executed: {}", result);
-            info!("{}", success_msg);
+            info!(target=&pair, "{}", success_msg);
             success_msg
         }
         Err(e) => {
             let error_msg = format!("❌ BUY execution failed: {}", e);
-            error!("{}", error_msg);
+            error!(target=&pair, "{}", error_msg);
             error_msg
         }
     }
@@ -189,9 +205,9 @@ fn buy(pair: String, amount: f64, confidence: usize, explanation: String) -> Str
 #[tool]
 /// Hold asset, confidence in % about this decision, THIS IS FINAL DECISION
 fn hold(pair: String, confidence: usize, explanation: String) -> String {
-    info!("FINAL DECISION: HOLD ⌛");
-    info!("CONFIDENCE: {} %", confidence);
-    info!("EXPLANATION: {}", explanation);
+    info!(target=&pair, "FINAL DECISION: HOLD ⌛");
+    info!(target=&pair,"CONFIDENCE: {} %", confidence);
+    info!(target=&pair, "EXPLANATION: {}", explanation);
     
     format!("✅ HOLD decision recorded for pair {}", pair)
 }
@@ -203,11 +219,11 @@ fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -
     // Get current price for transaction recording
     let current_price = match get_current_price(pair) {
         Ok(price) => {
-            info!("💰 Current price for {}: ${:.4}", pair, price);
+            info!(target=&pair, "💰 Current price for {}: ${:.4}", pair, price);
             price
         }
         Err(e) => {
-            error!("❌ Failed to get current price for {}: {:?}", pair, e);
+            error!(target=&pair, "❌ Failed to get current price for {}: {:?}", pair, e);
             return Err(format!("Cannot get current price for {}: {}", pair, e).into());
         }
     };

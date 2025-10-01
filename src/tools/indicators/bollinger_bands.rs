@@ -183,7 +183,10 @@ pub fn calculate_bollinger_bands_indicator(
         .and_then(|p| p.parse::<f64>().ok())
         .unwrap_or(2.0);
     
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
     rt.block_on(async {
         match get_klines_for_indicators(&symbol, "5m", 100).await {
             Ok(klines) => {
@@ -217,7 +220,10 @@ pub fn calculate_bollinger_bands_24h(
         .and_then(|p| p.parse::<f64>().ok())
         .unwrap_or(2.0);
     
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
     rt.block_on(async {
         match get_klines_for_indicators(&symbol, "5m", 288).await { // 24h data
             Ok(klines) => {

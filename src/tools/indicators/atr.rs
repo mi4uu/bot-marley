@@ -26,8 +26,10 @@ pub fn calculate_atr(klines: &[Kline], period: usize) -> Vec<f64> {
     // Calculate ATR using Simple Moving Average of True Range
     let mut atr_values = Vec::new();
     for i in period - 1..true_ranges.len() {
-        let sum: f64 = true_ranges[i - period + 1..=i].iter().sum();
-        atr_values.push(sum / period as f64);
+        let start_idx = if i + 1 >= period { i + 1 - period } else { 0 };
+        let sum: f64 = true_ranges[start_idx..=i].iter().sum();
+        let count = i - start_idx + 1;
+        atr_values.push(sum / count as f64);
     }
 
     atr_values
@@ -136,7 +138,11 @@ pub fn calculate_atr_indicator(symbol: String, period: Option<String>) -> String
         .and_then(|p| p.parse::<u32>().ok())
         .unwrap_or(14) as usize;
     
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
+    
     rt.block_on(async {
         match get_klines_for_indicators(&symbol, "5m", 100).await {
             Ok(klines) => {
@@ -152,6 +158,7 @@ pub fn calculate_atr_indicator(symbol: String, period: Option<String>) -> String
                 }
             }
             Err(e) => {
+                tracing::error!("Failed to fetch price data for ATR calculation: {}", e);
                 format!("❌ Error fetching price data for {}: {}", symbol, e)
             }
         }
@@ -165,7 +172,11 @@ pub fn calculate_atr_24h(symbol: String, period: Option<String>) -> String {
         .and_then(|p| p.parse::<u32>().ok())
         .unwrap_or(14) as usize;
     
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
+    
     rt.block_on(async {
         match get_klines_for_indicators(&symbol, "5m", 288).await { // 24h data
             Ok(klines) => {
@@ -183,6 +194,7 @@ pub fn calculate_atr_24h(symbol: String, period: Option<String>) -> String {
                 }
             }
             Err(e) => {
+                tracing::error!("Failed to fetch 24h price data for ATR calculation: {}", e);
                 format!("❌ Error fetching 24h price data for {}: {}", symbol, e)
             }
         }

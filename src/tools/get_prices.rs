@@ -29,31 +29,66 @@ impl Kline {
             return Err("Invalid kline array length".into());
         }
 
+        // Helper function to safely parse string values, handling null cases
+        let parse_string_field = |value: &serde_json::Value, field_name: &str| -> Result<f64, Box<dyn std::error::Error>> {
+            match value {
+                serde_json::Value::String(s) => s.parse::<f64>().map_err(|e| format!("Failed to parse {} '{}': {}", field_name, s, e).into()),
+                serde_json::Value::Number(n) => Ok(n.as_f64().unwrap_or(0.0)),
+                serde_json::Value::Null => {
+                    tracing::warn!("Null value encountered for field {}, using 0.0", field_name);
+                    Ok(0.0)
+                },
+                _ => Err(format!("Invalid {} type: expected string or number, got {:?}", field_name, value).into()),
+            }
+        };
+
+        let parse_u64_field = |value: &serde_json::Value, field_name: &str| -> Result<u64, Box<dyn std::error::Error>> {
+            match value {
+                serde_json::Value::Number(n) => Ok(n.as_u64().unwrap_or(0)),
+                serde_json::Value::String(s) => s.parse::<u64>().map_err(|e| format!("Failed to parse {} '{}': {}", field_name, s, e).into()),
+                serde_json::Value::Null => {
+                    tracing::warn!("Null value encountered for field {}, using 0", field_name);
+                    Ok(0)
+                },
+                _ => Err(format!("Invalid {} type: expected number or string, got {:?}", field_name, value).into()),
+            }
+        };
+
         Ok(Kline {
-            open_time: arr[0].as_u64().ok_or("Invalid open_time")?,
-            open: arr[1].as_str().ok_or("Invalid open")?.parse()?,
-            high: arr[2].as_str().ok_or("Invalid high")?.parse()?,
-            low: arr[3].as_str().ok_or("Invalid low")?.parse()?,
-            close: arr[4].as_str().ok_or("Invalid close")?.parse()?,
-            volume: arr[5].as_str().ok_or("Invalid volume")?.parse()?,
-            close_time: arr[6].as_u64().ok_or("Invalid close_time")?,
-            quote_asset_volume: arr[7].as_str().ok_or("Invalid quote_asset_volume")?.parse()?,
-            number_of_trades: arr[8].as_u64().ok_or("Invalid number_of_trades")?,
-            taker_buy_base_asset_volume: arr[9].as_str().ok_or("Invalid taker_buy_base_asset_volume")?.parse()?,
-            taker_buy_quote_asset_volume: arr[10].as_str().ok_or("Invalid taker_buy_quote_asset_volume")?.parse()?,
-            ignore: arr[11].as_str().ok_or("Invalid ignore")?.parse()?,
+            open_time: parse_u64_field(&arr[0], "open_time")?,
+            open: parse_string_field(&arr[1], "open")?,
+            high: parse_string_field(&arr[2], "high")?,
+            low: parse_string_field(&arr[3], "low")?,
+            close: parse_string_field(&arr[4], "close")?,
+            volume: parse_string_field(&arr[5], "volume")?,
+            close_time: parse_u64_field(&arr[6], "close_time")?,
+            quote_asset_volume: parse_string_field(&arr[7], "quote_asset_volume")?,
+            number_of_trades: parse_u64_field(&arr[8], "number_of_trades")?,
+            taker_buy_base_asset_volume: parse_string_field(&arr[9], "taker_buy_base_asset_volume")?,
+            taker_buy_quote_asset_volume: parse_string_field(&arr[10], "taker_buy_quote_asset_volume")?,
+            ignore: parse_string_field(&arr[11], "ignore")?,
         })
     }
 
     pub fn format_for_display(&self) -> String {
+        // Determine appropriate decimal places based on price magnitude
+        let decimal_places = if self.close < 0.001 {
+            8  // For very small values like XRP/BTC
+        } else if self.close < 1.0 {
+            6  // For small values
+        } else {
+            4  // For regular values
+        };
+        
         format!(
-            "Time: {} | Open: ${:.4} | High: ${:.4} | Low: ${:.4} | Close: ${:.4} | Volume: {:.2}",
+            "Time: {} | Open: ${:.prec$} | High: ${:.prec$} | Low: ${:.prec$} | Close: ${:.prec$} | Volume: {:.2}",
             self.format_timestamp(),
             self.open,
             self.high,
             self.low,
             self.close,
-            self.volume
+            self.volume,
+            prec = decimal_places
         )
     }
 
@@ -94,7 +129,7 @@ async fn get_cache() -> &'static KlineCache {
 }
 
 pub async fn fetch_klines_cached(symbol: &str, interval: &str, limit: u32) -> Result<Vec<Kline>, Box<dyn std::error::Error>> {
-  dbg!(symbol,&interval,&limit);
+    dbg!(symbol, &interval, &limit);
     let cache_key = format!("{}:{}:{}", symbol, interval, limit);
     let cache_duration = Duration::from_secs(60); // 1 minute cache
     
@@ -102,7 +137,7 @@ pub async fn fetch_klines_cached(symbol: &str, interval: &str, limit: u32) -> Re
     
     // Check cache first
     {
-        let cache_guard = cache.lock().unwrap();
+        let cache_guard = cache.lock().map_err(|e| format!("Failed to acquire cache lock: {}", e))?;
         if let Some(cached_data) = cache_guard.get(&cache_key) {
             if !cached_data.is_expired(cache_duration) {
                 info!("📋 Using cached data for {}", symbol);
@@ -126,22 +161,57 @@ pub async fn fetch_klines_cached(symbol: &str, interval: &str, limit: u32) -> Re
         .get(url)
         .query(&params)
         .send()
-        .await?
-        .json::<serde_json::Value>()
-        .await?;
+        .await
+        .map_err(|e| format!("Failed to send request to Binance API: {}", e))?;
 
-    let klines_array = response.as_array().ok_or("Invalid response format")?;
+    // Check if the response is successful
+    if !response.status().is_success() {
+        let status = response.status();
+        let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
+        return Err(format!("Binance API error {}: {}", status, error_text).into());
+    }
+
+    let response_json = response
+        .json::<serde_json::Value>()
+        .await
+        .map_err(|e| format!("Failed to parse JSON response: {}", e))?;
+
+    // Handle potential error responses from Binance
+    if let Some(code) = response_json.get("code") {
+        let msg = response_json.get("msg").and_then(|m| m.as_str()).unwrap_or("Unknown error");
+        return Err(format!("Binance API error {}: {}", code, msg).into());
+    }
+
+    let klines_array = response_json.as_array()
+        .ok_or_else(|| format!("Invalid response format: expected array, got {:?}", response_json))?;
+    
+    if klines_array.is_empty() {
+        return Err(format!("No kline data returned for symbol {}", symbol).into());
+    }
+
     let mut klines = Vec::new();
 
-    for kline_data in klines_array {
-        let kline_array = kline_data.as_array().ok_or("Invalid kline format")?;
-        let kline = Kline::from_binance_array(kline_array)?;
-        klines.push(kline);
+    for (index, kline_data) in klines_array.iter().enumerate() {
+        let kline_array = kline_data.as_array()
+            .ok_or_else(|| format!("Invalid kline format at index {}: expected array, got {:?}", index, kline_data))?;
+        
+        match Kline::from_binance_array(kline_array) {
+            Ok(kline) => klines.push(kline),
+            Err(e) => {
+                tracing::warn!("Failed to parse kline at index {}: {}. Skipping.", index, e);
+                // Continue processing other klines instead of failing completely
+                continue;
+            }
+        }
+    }
+
+    if klines.is_empty() {
+        return Err(format!("No valid klines could be parsed for symbol {}", symbol).into());
     }
 
     // Update cache
     {
-        let mut cache_guard = cache.lock().unwrap();
+        let mut cache_guard = cache.lock().map_err(|e| format!("Failed to acquire cache lock for update: {}", e))?;
         cache_guard.insert(cache_key, CachedKlineData::new(klines.clone()));
     }
 
@@ -168,9 +238,21 @@ pub fn format_klines_for_ai(klines: &[Kline], symbol: &str) -> String {
 
     // Current price info
     if let Some(latest) = klines.last() {
-        result.push_str(&format!("🔴 CURRENT PRICE: ${:.4}\n", latest.close));
-        result.push_str(&format!("📈 Period High: ${:.4}\n", klines.iter().map(|k| k.high).fold(0.0, f64::max)));
-        result.push_str(&format!("📉 Period Low: ${:.4}\n", klines.iter().map(|k| k.low).fold(f64::INFINITY, f64::min)));
+        // Determine appropriate decimal places based on price magnitude
+        let decimal_places = if latest.close < 0.001 {
+            8  // For very small values like XRP/BTC
+        } else if latest.close < 1.0 {
+            6  // For small values
+        } else {
+            4  // For regular values
+        };
+        
+        let period_high = klines.iter().map(|k| k.high).fold(0.0, f64::max);
+        let period_low = klines.iter().map(|k| k.low).fold(f64::INFINITY, f64::min);
+        
+        result.push_str(&format!("🔴 CURRENT PRICE: ${:.prec$}\n", latest.close, prec = decimal_places));
+        result.push_str(&format!("📈 Period High: ${:.prec$}\n", period_high, prec = decimal_places));
+        result.push_str(&format!("📉 Period Low: ${:.prec$}\n", period_low, prec = decimal_places));
         result.push_str(&format!("📊 Period Volume: {:.2}\n", klines.iter().map(|k| k.volume).sum::<f64>()));
         
         // Calculate period change
@@ -221,7 +303,11 @@ pub fn format_klines_for_ai(klines: &[Kline], symbol: &str) -> String {
 /// Get comprehensive price data for a trading symbol with caching optimization
 pub fn get_price(symbol: String) -> String {
     // Use tokio runtime to handle async call in sync context
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
+    
     rt.block_on(async {
         // For 24h data, we need 288 candles (24h * 60min / 5min intervals)
         // For now, using 100 candles (~8.33 hours) for faster response
@@ -230,6 +316,7 @@ pub fn get_price(symbol: String) -> String {
                 format_klines_for_ai(&klines, &symbol)
             }
             Err(e) => {
+                tracing::error!("Failed to fetch price data for {}: {}", symbol, e);
                 format!("❌ Error fetching price data for {}: {}", symbol, e)
             }
         }
@@ -239,7 +326,11 @@ pub fn get_price(symbol: String) -> String {
 #[tool]
 /// Get 24-hour price data for a trading symbol (288 x 5min candles)
 pub fn get_price_24h(symbol: String) -> String {
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
+    
     rt.block_on(async {
         // 288 candles = 24 hours of 5-minute data
         match fetch_klines_cached(&symbol, "5m", 288).await {
@@ -247,6 +338,7 @@ pub fn get_price_24h(symbol: String) -> String {
                 format_klines_for_ai(&klines, &symbol)
             }
             Err(e) => {
+                tracing::error!("Failed to fetch 24h price data for {}: {}", symbol, e);
                 format!("❌ Error fetching 24h price data for {}: {}", symbol, e)
             }
         }

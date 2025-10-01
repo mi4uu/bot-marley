@@ -4,6 +4,24 @@ use std::fs;
 use std::path::Path;
 use chrono::{DateTime, Utc};
 use tracing::{info, warn, error};
+use std::io::{BufRead, BufReader};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Transaction {
+    pub date: String,
+    pub time: String,
+    pub asset: String,
+    pub pair: String,
+    pub transaction_type: String, // "BUY" or "SELL"
+    pub amount: f64,
+    pub price_per_unit: f64,
+    pub amount_in_usd: f64,
+    pub profit: f64,
+    pub profit_in_usd: f64,
+    pub profit_percent: f64,
+    pub total_asset: f64,
+    pub total_asset_worth_usd: f64,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TradingDecision {
@@ -66,6 +84,12 @@ impl TradingState {
         }
 
         history.decisions.push(decision.clone());
+        
+        // Keep only the last 30 decisions per symbol
+        if history.decisions.len() > 30 {
+            history.decisions.drain(0..history.decisions.len() - 30);
+        }
+        
         history.last_decision = Some(decision);
         history.total_decisions += 1;
         
@@ -105,11 +129,90 @@ impl TradingState {
             .max()
     }
 
+    /// Read and parse transactions from the JSONL file
+    pub fn read_transactions(file_path: &str) -> Result<Vec<Transaction>, Box<dyn std::error::Error>> {
+        let file = fs::File::open(file_path)?;
+        let reader = BufReader::new(file);
+        let mut transactions = Vec::new();
+
+        for line in reader.lines() {
+            let line = line?;
+            if !line.trim().is_empty() {
+                match serde_json::from_str::<Transaction>(&line) {
+                    Ok(transaction) => transactions.push(transaction),
+                    Err(e) => {
+                        warn!("Failed to parse transaction line: {} - Error: {}", line, e);
+                    }
+                }
+            }
+        }
+
+        Ok(transactions)
+    }
+
+    /// Get the last 5 transactions for a specific symbol
+    pub fn get_last_transactions_for_symbol(symbol: &str, limit: usize) -> Vec<Transaction> {
+        match Self::read_transactions("data/transactions.jsonl") {
+            Ok(transactions) => {
+                // Filter transactions by symbol and get the last `limit` transactions
+                let mut symbol_transactions: Vec<Transaction> = transactions
+                    .into_iter()
+                    .filter(|t| t.pair == symbol)
+                    .collect();
+                
+                // Sort by date and time to ensure we get the most recent ones
+                symbol_transactions.sort_by(|a, b| {
+                    let datetime_a = format!("{} {}", a.date, a.time);
+                    let datetime_b = format!("{} {}", b.date, b.time);
+                    datetime_b.cmp(&datetime_a) // Reverse order for most recent first
+                });
+                
+                symbol_transactions.into_iter().take(limit).collect()
+            }
+            Err(e) => {
+                warn!("Failed to read transactions for {}: {}", symbol, e);
+                Vec::new()
+            }
+        }
+    }
+
     pub fn generate_context_summary(&self, symbol: &str) -> String {
+        let mut summary = String::new();
+        
+        // Add transaction history first
+        let transactions = Self::get_last_transactions_for_symbol(symbol, 5);
+        if !transactions.is_empty() {
+            summary.push_str(&format!("\n💰 RECENT TRANSACTIONS FOR {}:\n", symbol));
+            for (i, transaction) in transactions.iter().enumerate() {
+                let profit_indicator = if transaction.profit_percent > 0.0 {
+                    format!("📈 +{:.2}%", transaction.profit_percent)
+                } else if transaction.profit_percent < 0.0 {
+                    format!("📉 {:.2}%", transaction.profit_percent)
+                } else {
+                    "⚪ 0.00%".to_string()
+                };
+                
+                summary.push_str(&format!(
+                    "  {}. {} {} {:.4} @ ${:.4} = ${:.2} {}\n",
+                    i + 1,
+                    transaction.transaction_type,
+                    transaction.asset,
+                    transaction.amount,
+                    transaction.price_per_unit,
+                    transaction.amount_in_usd,
+                    profit_indicator
+                ));
+            }
+            summary.push_str("\n");
+        } else {
+            summary.push_str(&format!("\n💰 RECENT TRANSACTIONS FOR {}:\n  • No recent transactions found\n\n", symbol));
+        }
+
+        // Add trading decision history
         if let Some(history) = self.get_symbol_history(symbol) {
-            let mut summary = format!(
-                "\n📊 TRADING HISTORY FOR {}:\n", symbol
-            );
+            summary.push_str(&format!(
+                "📊 TRADING HISTORY FOR {}:\n", symbol
+            ));
             
             summary.push_str(&format!(
                 "  • Total decisions: {} (Buy: {}, Sell: {}, Hold: {})\n",
@@ -147,11 +250,11 @@ impl TradingState {
                     ));
                 }
             }
-            
-            summary
         } else {
-            format!("\n📊 TRADING HISTORY FOR {}:\n  • No previous decisions found\n", symbol)
+            summary.push_str(&format!("📊 TRADING HISTORY FOR {}:\n  • No previous decisions found\n", symbol));
         }
+        
+        summary
     }
 }
 

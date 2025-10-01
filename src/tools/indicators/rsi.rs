@@ -101,7 +101,10 @@ pub fn calculate_rsi(symbol: String, period: Option<String>) -> String {
         .and_then(|p| p.parse::<u32>().ok())
         .unwrap_or(14) as usize;
     
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
     rt.block_on(async {
         match get_klines_for_indicators(&symbol, "5m", 100).await {
             Ok(klines) => {
@@ -128,7 +131,10 @@ pub fn calculate_rsi_24h(symbol: String, period: Option<String>) -> String {
         .and_then(|p| p.parse::<u32>().ok())
         .unwrap_or(14) as usize;
     
-    let rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = match tokio::runtime::Runtime::new() {
+        Ok(runtime) => runtime,
+        Err(e) => return format!("❌ Failed to create async runtime: {}", e),
+    };
     rt.block_on(async {
         match get_klines_for_indicators(&symbol, "5m", 288).await { // 24h data
             Ok(klines) => {
