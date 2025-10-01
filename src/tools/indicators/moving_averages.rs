@@ -1,5 +1,5 @@
 use mono_ai_macros::tool;
-use crate::tools::get_prices::{get_klines_for_indicators, Kline};
+use crate::tools::get_prices::get_klines_for_indicators;
 
 /// Calculate Simple Moving Average (SMA)
 pub fn calculate_sma(closes: &[f64], period: usize) -> Vec<f64> {

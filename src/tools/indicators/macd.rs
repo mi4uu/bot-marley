@@ -1,5 +1,5 @@
 use mono_ai_macros::tool;
-use crate::tools::get_prices::{get_klines_for_indicators, Kline};
+use crate::tools::get_prices::get_klines_for_indicators;
 use crate::tools::indicators::moving_averages::calculate_ema;
 
 #[derive(Debug, Clone)]

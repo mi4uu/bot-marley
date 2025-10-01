@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use tokio::sync::OnceCell;
-use tracing::{info, debug};
+use tracing::info;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Kline {

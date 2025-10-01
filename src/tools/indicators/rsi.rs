@@ -1,6 +1,5 @@
 use mono_ai_macros::tool;
 use crate::tools::get_prices::{get_klines_for_indicators, Kline};
-use crate::tools::indicators::{IndicatorResult, generate_signals};
 
 /// Calculate RSI (Relative Strength Index) using the financial_indicators crate
 pub fn calculate_rsi_from_klines(klines: &[Kline], period: usize) -> Result<Vec<f64>, Box<dyn std::error::Error>> {
