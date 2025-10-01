@@ -2,6 +2,8 @@ use binance::api::*;
 use binance::account::*;
 use binance::model::*;
 use serde::{Deserialize, Serialize};
+use color_eyre::eyre::{Result, WrapErr, eyre};
+use color_eyre::Section;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UserAsset {
@@ -28,20 +30,20 @@ pub struct BinanceClient {
 }
 
 impl BinanceClient {
-    pub fn new(api_key: String, secret_key: String) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new(api_key: String, secret_key: String) -> Result<Self> {
         let account = Binance::new(Some(api_key), Some(secret_key));
         Ok(Self { account })
     }
 
-    pub fn get_account_info(&self) -> Result<AccountInformation, Box<dyn std::error::Error>> {
-        match self.account.get_account() {
-            Ok(account_info) => Ok(account_info),
-            Err(e) => Err(format!("Failed to get account info: {}", e).into()),
-        }
+    pub fn get_account_info(&self) -> Result<AccountInformation> {
+        self.account.get_account()
+            .map_err(|e| eyre!("Failed to get account info: {}", e))
+            .with_suggestion(|| "Check your Binance API credentials and permissions")
     }
 
-    pub fn get_user_assets(&self) -> Result<Vec<UserAsset>, Box<dyn std::error::Error>> {
-        let account_info = self.get_account_info()?;
+    pub fn get_user_assets(&self) -> Result<Vec<UserAsset>> {
+        let account_info = self.get_account_info()
+            .wrap_err("Failed to retrieve account information for assets")?;
         
         let mut assets = Vec::new();
         for balance in account_info.balances {
@@ -66,36 +68,37 @@ impl BinanceClient {
         Ok(assets)
     }
 
-    pub fn get_open_orders(&self) -> Result<Vec<UserOrder>, Box<dyn std::error::Error>> {
-        match self.account.get_all_open_orders() {
-            Ok(orders) => {
-                let user_orders = orders
-                    .into_iter()
-                    .map(|order| UserOrder {
-                        symbol: order.symbol,
-                        order_id: order.order_id,
-                        side: order.side,
-                        order_type: order.type_name,
-                        quantity: order.orig_qty,
-                        price: order.price.to_string(),
-                        status: order.status,
-                        time: order.time,
-                    })
-                    .collect();
-                Ok(user_orders)
-            }
-            Err(e) => Err(format!("Failed to get open orders: {}", e).into()),
-        }
+    pub fn get_open_orders(&self) -> Result<Vec<UserOrder>> {
+        let orders = self.account.get_all_open_orders()
+            .map_err(|e| eyre!("Failed to get open orders: {}", e))
+            .with_suggestion(|| "Check your Binance API credentials and network connection")?;
+            
+        let user_orders = orders
+            .into_iter()
+            .map(|order| UserOrder {
+                symbol: order.symbol,
+                order_id: order.order_id,
+                side: order.side,
+                order_type: order.type_name,
+                quantity: order.orig_qty,
+                price: order.price.to_string(),
+                status: order.status,
+                time: order.time,
+            })
+            .collect();
+        Ok(user_orders)
     }
 
-    pub fn get_recent_orders(&self, _symbol: Option<String>, _limit: Option<u16>) -> Result<Vec<UserOrder>, Box<dyn std::error::Error>> {
+    pub fn get_recent_orders(&self, _symbol: Option<String>, _limit: Option<u16>) -> Result<Vec<UserOrder>> {
         // For now, just return open orders as the binance crate API is different
         self.get_open_orders()
     }
 
-    pub fn format_account_summary(&self) -> Result<String, Box<dyn std::error::Error>> {
-        let assets = self.get_user_assets()?;
-        let open_orders = self.get_open_orders()?;
+    pub fn format_account_summary(&self) -> Result<String> {
+        let assets = self.get_user_assets()
+            .wrap_err("Failed to get user assets for summary")?;
+        let open_orders = self.get_open_orders()
+            .wrap_err("Failed to get open orders for summary")?;
         
         let mut summary = String::new();
         summary.push_str("📊 **ACCOUNT SUMMARY**\n\n");

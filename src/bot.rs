@@ -1,12 +1,13 @@
 use std::sync::Arc;
 use futures_util::StreamExt;
-use tracing::{info, debug, warn};
+use tracing::{info, debug, warn, info_span};
 use chrono::Utc;
+use color_eyre::eyre::{Result, eyre};
+use color_eyre::Section;
 
 use mono_ai::{Message, MonoAI};
 
 use crate::config::Config;
-use crate::binance_client::BinanceClient;
 use crate::persistence::{PersistenceManager, TradingState, TradingDecision};
 use crate::tools::get_prices::fetch_klines_cached;
 
@@ -80,7 +81,7 @@ pub struct Bot {
 }
 
 impl Bot {
-    pub async fn new(config: Config) -> Result<Self, Box<dyn std::error::Error>> {
+    pub async fn new(config: Config) -> Result<Self> {
         let config = Arc::new(config);
         let mut ai = MonoAI::openai_compatible(
             config.as_ref().openai_base_url.clone(),
@@ -89,30 +90,51 @@ impl Bot {
         );
 
         // add tools
-        ai.add_tool(crate::tools::get_prices::get_price_tool()).await?;
-        ai.add_tool(crate::tools::get_prices::get_price_24h_tool()).await?;
+        // Add tools with proper error handling
+        ai.add_tool(crate::tools::get_prices::get_price_tool()).await
+            .map_err(|e| eyre!("Failed to add price tool: {}", e))?;
+        ai.add_tool(crate::tools::get_prices::get_price_24h_tool()).await
+            .map_err(|e| eyre!("Failed to add 24h price tool: {}", e))?;
         
         // Technical indicators
-        ai.add_tool(crate::tools::indicators::rsi::calculate_rsi_tool()).await?;
-        ai.add_tool(crate::tools::indicators::rsi::calculate_rsi_24h_tool()).await?;
-        ai.add_tool(crate::tools::indicators::moving_averages::calculate_moving_averages_tool()).await?;
-        ai.add_tool(crate::tools::indicators::moving_averages::calculate_sma_indicator_tool()).await?;
-        ai.add_tool(crate::tools::indicators::moving_averages::calculate_ema_indicator_tool()).await?;
-        ai.add_tool(crate::tools::indicators::macd::calculate_macd_indicator_tool()).await?;
-        ai.add_tool(crate::tools::indicators::macd::calculate_macd_24h_tool()).await?;
-        ai.add_tool(crate::tools::indicators::bollinger_bands::calculate_bollinger_bands_indicator_tool()).await?;
-        ai.add_tool(crate::tools::indicators::bollinger_bands::calculate_bollinger_bands_24h_tool()).await?;
-        ai.add_tool(crate::tools::indicators::atr::calculate_atr_indicator_tool()).await?;
-        ai.add_tool(crate::tools::indicators::atr::calculate_atr_24h_tool()).await?;
-        ai.add_tool(crate::tools::indicators::stochastic::calculate_stochastic_indicator_tool()).await?;
-        ai.add_tool(crate::tools::indicators::stochastic::calculate_stochastic_24h_tool()).await?;
-        ai.add_tool(crate::tools::indicators::volume_indicators::calculate_volume_indicators_tool()).await?;
-        ai.add_tool(crate::tools::indicators::volume_indicators::calculate_volume_indicators_24h_tool()).await?;
+        ai.add_tool(crate::tools::indicators::rsi::calculate_rsi_tool()).await
+            .map_err(|e| eyre!("Failed to add RSI tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::rsi::calculate_rsi_24h_tool()).await
+            .map_err(|e| eyre!("Failed to add RSI 24h tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::moving_averages::calculate_moving_averages_tool()).await
+            .map_err(|e| eyre!("Failed to add moving averages tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::moving_averages::calculate_sma_indicator_tool()).await
+            .map_err(|e| eyre!("Failed to add SMA tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::moving_averages::calculate_ema_indicator_tool()).await
+            .map_err(|e| eyre!("Failed to add EMA tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::macd::calculate_macd_indicator_tool()).await
+            .map_err(|e| eyre!("Failed to add MACD tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::macd::calculate_macd_24h_tool()).await
+            .map_err(|e| eyre!("Failed to add MACD 24h tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::bollinger_bands::calculate_bollinger_bands_indicator_tool()).await
+            .map_err(|e| eyre!("Failed to add Bollinger Bands tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::bollinger_bands::calculate_bollinger_bands_24h_tool()).await
+            .map_err(|e| eyre!("Failed to add Bollinger Bands 24h tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::atr::calculate_atr_indicator_tool()).await
+            .map_err(|e| eyre!("Failed to add ATR tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::atr::calculate_atr_24h_tool()).await
+            .map_err(|e| eyre!("Failed to add ATR 24h tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::stochastic::calculate_stochastic_indicator_tool()).await
+            .map_err(|e| eyre!("Failed to add Stochastic tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::stochastic::calculate_stochastic_24h_tool()).await
+            .map_err(|e| eyre!("Failed to add Stochastic 24h tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::volume_indicators::calculate_volume_indicators_tool()).await
+            .map_err(|e| eyre!("Failed to add volume indicators tool: {}", e))?;
+        ai.add_tool(crate::tools::indicators::volume_indicators::calculate_volume_indicators_24h_tool()).await
+            .map_err(|e| eyre!("Failed to add volume indicators 24h tool: {}", e))?;
         
         // Trading actions
-        ai.add_tool(crate::tools::binance_trade::buy_tool()).await?;
-        ai.add_tool(crate::tools::binance_trade::sell_tool()).await?;
-        ai.add_tool(crate::tools::binance_trade::hold_tool()).await?;
+        ai.add_tool(crate::tools::binance_trade::buy_tool()).await
+            .map_err(|e| eyre!("Failed to add buy tool: {}", e))?;
+        ai.add_tool(crate::tools::binance_trade::sell_tool()).await
+            .map_err(|e| eyre!("Failed to add sell tool: {}", e))?;
+        ai.add_tool(crate::tools::binance_trade::hold_tool()).await
+            .map_err(|e| eyre!("Failed to add hold tool: {}", e))?;
 
         // Initialize persistence manager
         let persistence_manager = Arc::new(PersistenceManager::new("data/trading_state.json"));
@@ -183,7 +205,7 @@ impl Bot {
     }
 
     /// Get the latest price timestamp for a symbol from Binance data
-    async fn get_latest_price_timestamp(&self, symbol: &str) -> Result<Option<u64>, Box<dyn std::error::Error>> {
+    async fn get_latest_price_timestamp(&self, symbol: &str) -> Result<Option<u64>> {
         // Fetch the latest kline data (just 1 candle to get the most recent timestamp)
         match fetch_klines_cached(symbol, "5m", 1).await {
             Ok(klines) => {
@@ -194,13 +216,13 @@ impl Bot {
                 }
             }
             Err(e) => {
-                warn!("⚠️ Failed to fetch price timestamp for {}: {}", symbol, e);
+                warn!("⚠️ Failed to fetch price timestamp for {}: {:?}", symbol, e);
                 Ok(None)
             }
         }
     }
 
-    pub async fn run_analysis_loop(&mut self, symbol: &str) -> Result<BotResult, Box<dyn std::error::Error>> {
+    pub async fn run_analysis_loop(&mut self, symbol: &str) -> Result<BotResult> {
         // Check if we already made a decision for the current price timestamp
         if let Ok(Some(current_price_timestamp)) = self.get_latest_price_timestamp(symbol).await {
             if self.trading_state.has_decision_for_timestamp(symbol, current_price_timestamp) {
@@ -227,17 +249,29 @@ impl Bot {
         while self.current_turn < self.config.bot_max_turns {
             self.current_turn += 1;
             
+            let _turn_span = info_span!("bot_turn",
+                symbol = symbol,
+                turn = self.current_turn,
+                max_turns = self.config.bot_max_turns
+            ).entered();
+            
             info!("🤖 Turn {}/{} - Analyzing {}...",
                 self.current_turn, self.config.bot_max_turns, symbol);
 
             // Send chat request and handle streaming response
-            let mut stream = self.ai.send_chat_request(&self.messages).await?;
+            let mut stream = match self.ai.send_chat_request(&self.messages).await {
+                Ok(stream) => stream,
+                Err(e) => {
+                    return Err(eyre!("Failed to send chat request to AI: {}", e)
+                        .with_suggestion(|| "Check your AI API credentials and network connection"));
+                }
+            };
             let mut full_response = String::new();
             let mut tool_calls = None;
 
             // Process streaming response
             while let Some(item) = stream.next().await {
-                let item = item.map_err(|e| format!("Stream error: {}", e))?;
+                let item = item.map_err(|e| eyre!("Stream error: {}", e))?;
                 
                 if !item.content.is_empty() {
                     debug!("AI response chunk: {}", item.content);
@@ -268,7 +302,9 @@ impl Bot {
                 info!("\n🔧 Executing tools...");
                 
                 // Execute tool calls first
-                let tool_responses = self.ai.handle_tool_calls(tc.clone()).await;
+                let tool_responses = match self.ai.handle_tool_calls(tc.clone()).await {
+                    responses => responses, // handle_tool_calls doesn't return Result, so just use the responses
+                };
                 
                 // Check if any tool call was a successful trading decision
                 for (tool_call, response) in tc.iter().zip(tool_responses.iter()) {

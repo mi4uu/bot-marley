@@ -203,7 +203,10 @@ pub fn format_volume_analysis(
         if klines.len() >= 20 {
             let recent_volumes: Vec<f64> = klines.iter().rev().take(20).map(|k| k.volume).collect();
             let avg_volume: f64 = recent_volumes.iter().sum::<f64>() / recent_volumes.len() as f64;
-            let current_volume = klines.last().unwrap().volume;
+            let current_volume = match klines.last() {
+                Some(kline) => kline.volume,
+                None => return "❌ Error: No kline data available for volume analysis".to_string(),
+            };
             
             if current_volume > avg_volume * 2.0 {
                 result.push_str("  • 🔥 VOLUME SPIKE - Unusually high volume detected\n");

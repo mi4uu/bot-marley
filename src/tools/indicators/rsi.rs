@@ -51,7 +51,10 @@ pub fn format_rsi_analysis(rsi_values: &[f64], symbol: &str, period: usize) -> S
         return format!("❌ No RSI data available for {}", symbol);
     }
 
-    let latest_rsi = rsi_values.last().unwrap();
+    let latest_rsi = match rsi_values.last() {
+        Some(rsi) => rsi,
+        None => return "❌ Error: No RSI values calculated".to_string(),
+    };
     let mut result = format!("📊 RSI({}) Analysis for {}:\n\n", period, symbol);
     
     result.push_str(&format!("🔢 Current RSI: {:.2}\n", latest_rsi));
@@ -181,7 +184,7 @@ mod tests {
             Kline { close: 46.25, ..Default::default() },
         ];
 
-        let rsi_values = calculate_rsi_from_klines(&klines, 14).unwrap();
+        let rsi_values = calculate_rsi_from_klines(&klines, 14).expect("Failed to calculate RSI in test");
         assert!(!rsi_values.is_empty());
         assert!(rsi_values[0] >= 0.0 && rsi_values[0] <= 100.0);
     }

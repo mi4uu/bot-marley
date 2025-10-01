@@ -10,6 +10,7 @@ use serde_json::Value;
 use std::env;
 use std::sync::Mutex;
 use std::sync::OnceLock;
+use color_eyre::eyre::{Result, WrapErr, eyre};
 
 // Global transaction tracker
 static TRANSACTION_TRACKER: OnceLock<Mutex<TransactionTracker>> = OnceLock::new();
@@ -21,7 +22,7 @@ fn get_transaction_tracker() -> &'static Mutex<TransactionTracker> {
 }
 
 // Helper function to get current price for USD value calculation using HTTP API
-async fn get_current_price_async(symbol: &str) -> Result<f64, Box<dyn std::error::Error>> {
+async fn get_current_price_async(symbol: &str) -> Result<f64> {
     let client = Client::new();
     let url = format!("https://api.binance.com/api/v3/ticker/price?symbol={}", symbol);
     
@@ -29,10 +30,10 @@ async fn get_current_price_async(symbol: &str) -> Result<f64, Box<dyn std::error
         .get(&url)
         .send()
         .await
-        .map_err(|e| format!("Failed to send request to Binance API: {}", e))?
+        .wrap_err("Failed to send request to Binance API")?
         .json::<Value>()
         .await
-        .map_err(|e| format!("Failed to parse JSON response from Binance API: {}", e))?;
+        .wrap_err("Failed to parse JSON response from Binance API")?;
     
     // Handle potential null values in the response
     let price_str = match response.get("price") {
@@ -40,24 +41,25 @@ async fn get_current_price_async(symbol: &str) -> Result<f64, Box<dyn std::error
             match price_value.as_str() {
                 Some(price_str) => price_str,
                 None => {
-                    return Err(format!("Price field is not a string: {:?}", price_value).into());
+                    return Err(eyre!("Price field is not a string: {:?}", price_value));
                 }
             }
         }
         None => {
-            return Err("Price field not found in response".into());
+            return Err(eyre!("Price field not found in response"));
         }
     };
     
     let price: f64 = price_str.parse()
-        .map_err(|e| format!("Failed to parse price '{}': {}", price_str, e))?;
+        .wrap_err_with(|| format!("Failed to parse price '{}'", price_str))?;
     
     Ok(price)
 }
 
 // Sync wrapper for price fetching
-fn get_current_price(symbol: &str) -> Result<f64, Box<dyn std::error::Error>> {
-    let rt = tokio::runtime::Runtime::new()?;
+fn get_current_price(symbol: &str) -> Result<f64> {
+    let rt = tokio::runtime::Runtime::new()
+        .wrap_err("Failed to create tokio runtime")?;
     rt.block_on(get_current_price_async(symbol))
 }
 
@@ -117,6 +119,7 @@ fn create_binance_client() -> Result<BinanceClient, String> {
     BinanceClient::new(api_key, secret_key)
         .map_err(|e| format!("Failed to create Binance client: {}", e))
 }
+#[tracing::instrument]
 
 #[tool]
 /// Sell asset, confidence in % about this decision, THIS IS FINAL DECISION
@@ -159,13 +162,14 @@ fn sell(pair: String, amount: f64, confidence: usize, explanation: String) -> St
         }
     }
 }
-
+#[tracing::instrument]
 #[tool]
 /// Buy asset, confidence in % about this decision, THIS IS FINAL DECISION
 fn buy(pair: String, amount: f64, confidence: usize, explanation: String) -> String {
-    info!(target=&pair, "FINAL DECISION: BUY 🛍️");
-    info!(target=&pair,"CONFIDENCE: {} %", confidence);
-    info!(target=&pair,"EXPLANATION: {}", explanation);
+
+    info!( "FINAL DECISION: BUY 🛍️");
+    info!("CONFIDENCE: {} %", confidence);
+    info!("EXPLANATION: {}", explanation);
     
     // Load config
     let config = Config::load();
@@ -201,19 +205,20 @@ fn buy(pair: String, amount: f64, confidence: usize, explanation: String) -> Str
         }
     }
 }
+#[tracing::instrument]
 
 #[tool]
 /// Hold asset, confidence in % about this decision, THIS IS FINAL DECISION
 fn hold(pair: String, confidence: usize, explanation: String) -> String {
-    info!(target=&pair, "FINAL DECISION: HOLD ⌛");
-    info!(target=&pair,"CONFIDENCE: {} %", confidence);
-    info!(target=&pair, "EXPLANATION: {}", explanation);
+    info!( "FINAL DECISION: HOLD ⌛");
+    info!("CONFIDENCE: {} %", confidence);
+    info!( "EXPLANATION: {}", explanation);
     
     format!("✅ HOLD decision recorded for pair {}", pair)
 }
 
 // Helper function to execute buy order
-fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -> Result<String, Box<dyn std::error::Error>> {
+fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -> Result<String> {
     info!("🔄 Attempting BUY order: {} {} at current market price", amount, pair);
     
     // Get current price for transaction recording
@@ -224,13 +229,15 @@ fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -
         }
         Err(e) => {
             error!(target=&pair, "❌ Failed to get current price for {}: {:?}", pair, e);
-            return Err(format!("Cannot get current price for {}: {}", pair, e).into());
+            return Err(eyre!("Cannot get current price for {}: {:?}", pair, e));
         }
     };
     
     // Create a new account instance for trading
-    let api_key = env::var("BINANCE_API_KEY")?;
-    let secret_key = env::var("BINANCE_SECRET_KEY")?;
+    let api_key = env::var("BINANCE_API_KEY")
+        .wrap_err("BINANCE_API_KEY environment variable not set")?;
+    let secret_key = env::var("BINANCE_SECRET_KEY")
+        .wrap_err("BINANCE_SECRET_KEY environment variable not set")?;
     
     info!("🔑 Using API key: {}...", &api_key[..8.min(api_key.len())]);
     info!("🔐 Secret key configured: {}", if secret_key.len() > 0 { "Yes" } else { "No" });
@@ -272,13 +279,13 @@ fn execute_buy_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -
             let error_msg = format!("{:?}", e);
             error!("❌ Full error debug: {}", error_msg);
             
-            Err(format!("Failed to place BUY order for {} {}: {}", amount, pair, error_msg).into())
+            Err(eyre!("Failed to place BUY order for {} {}: {}", amount, pair, error_msg))
         }
     }
 }
 
 // Helper function to execute sell order
-fn execute_sell_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -> Result<String, Box<dyn std::error::Error>> {
+fn execute_sell_order(pair: &str, amount: f64, _binance_client: &BinanceClient) -> Result<String> {
     info!("🔄 Attempting SELL order: {} {} at current market price", amount, pair);
     
     // Get current price for transaction recording
@@ -289,13 +296,15 @@ fn execute_sell_order(pair: &str, amount: f64, _binance_client: &BinanceClient) 
         }
         Err(e) => {
             error!("❌ Failed to get current price for {}: {:?}", pair, e);
-            return Err(format!("Cannot get current price for {}: {}", pair, e).into());
+            return Err(eyre!("Cannot get current price for {}: {:?}", pair, e));
         }
     };
     
     // Create a new account instance for trading
-    let api_key = env::var("BINANCE_API_KEY")?;
-    let secret_key = env::var("BINANCE_SECRET_KEY")?;
+    let api_key = env::var("BINANCE_API_KEY")
+        .wrap_err("BINANCE_API_KEY environment variable not set")?;
+    let secret_key = env::var("BINANCE_SECRET_KEY")
+        .wrap_err("BINANCE_SECRET_KEY environment variable not set")?;
     
     info!("🔑 Using API key: {}...", &api_key[..8.min(api_key.len())]);
     info!("🔐 Secret key configured: {}", if secret_key.len() > 0 { "Yes" } else { "No" });
@@ -338,7 +347,7 @@ fn execute_sell_order(pair: &str, amount: f64, _binance_client: &BinanceClient) 
             let error_msg = format!("{:?}", e);
             error!("❌ Full error debug: {}", error_msg);
             
-            Err(format!("Failed to place SELL order for {} {}: {}", amount, pair, error_msg).into())
+            Err(eyre!("Failed to place SELL order for {} {}: {}", amount, pair, error_msg))
         }
     }
 }

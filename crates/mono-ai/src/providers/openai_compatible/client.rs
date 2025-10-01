@@ -1,6 +1,7 @@
 use futures_util::{Stream, StreamExt};
 use reqwest::Client;
 use tokio::task;
+use std::fmt::format;
 use std::{error::Error, sync::Arc};
 use std::pin::Pin;
 use std::collections::HashMap;
@@ -305,12 +306,20 @@ impl OpenAICompatibleClient {
                 .find(|t| t.name == tool_call.function.name)
             {
                 let tool_call_args = tool_call.function.arguments.clone();
+                let tool_args_str=format!("{}",&tool_call_args);
                 let tool_function = Arc::clone(&tool.function);
 
-                let result = task::spawn_blocking(move || {
+                let result = match task::spawn_blocking(move || {
                     // Stand-in for compute-heavy work or using synchronous APIs
                     tool_function(tool_call_args)
-                }).await.expect("unable to spawn task");
+                }).await {
+Ok(r)=>r,
+Err(e)=>{
+    tracing::error!("error calling tool with arguments: {}.\nError was: {}", &tool_args_str, &e);
+    format!("error calling tool with arguments: {}.\nError was: {}", tool_args_str, e)
+}
+                };
+
                 
                 // Use the tool call ID if available, otherwise use "unknown"
                 let tool_id = tool_call.id.unwrap_or_else(|| "unknown".to_string());

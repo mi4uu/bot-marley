@@ -425,7 +425,7 @@ mod tests {
             serde_json::json!("0"),
         ];
 
-        let kline = Kline::from_binance_array(&test_data).unwrap();
+        let kline = Kline::from_binance_array(&test_data).expect("Failed to parse test data in test");
         assert_eq!(kline.open, 47000.00);
         assert_eq!(kline.high, 47500.00);
         assert_eq!(kline.low, 46800.00);

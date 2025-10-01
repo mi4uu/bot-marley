@@ -35,8 +35,9 @@ impl IndicatorResult {
         }
         
         if !self.values.is_empty() {
-            let latest = self.values.last().unwrap();
-            result.push_str(&format!("🔢 Current Value: {:.4}\n", latest));
+            if let Some(latest) = self.values.last() {
+                result.push_str(&format!("🔢 Current Value: {:.4}\n", latest));
+            }
         }
         
         if !self.signals.is_empty() {
@@ -68,7 +69,10 @@ pub fn generate_signals(indicator_name: &str, values: &[f64], current_price: f64
         return signals;
     }
     
-    let latest = values.last().unwrap();
+    let latest = match values.last() {
+        Some(value) => value,
+        None => return vec!["❌ Error: No values available for signal generation".to_string()],
+    };
     
     match indicator_name.to_lowercase().as_str() {
         "rsi" => {
