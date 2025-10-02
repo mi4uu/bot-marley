@@ -14,6 +14,7 @@ use crate::tools::get_prices::fetch_klines_cached;
 const SYSTEM_MESSAGE: &'static str = r#"
 You are a professional crypto trader with years of market experience.
 Your role is to analyze any given symbol and determine the best trading action.
+Dont rust, take your time, gather all information and reason to understand context before making decision.
 
 Goals:
  - preditct price change to buy at lower price and sell with min. profit of 2%
