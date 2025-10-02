@@ -7,6 +7,7 @@ use color_eyre::Section;
 
 use mono_ai::{Message, MonoAI};
 
+use crate::binance_client::BinanceClient;
 use crate::config::Config;
 use crate::persistence::{PersistenceManager, TradingState, TradingDecision};
 use crate::tools::get_prices::fetch_klines_cached;
@@ -154,18 +155,25 @@ impl Bot {
         })
     }
 
-    pub fn add_system_message(mut self) -> Self {
+    pub fn get_system_message(mut self) -> String {
         let sell_limit:f64=self.config.max_trade_value as f64;
         let sell_limit=sell_limit*1.1;
-        self.messages.push(Message {
-            role: "system".into(),
-            content: format!("{}\n\nRESTRICTIONS:\n- max buy for amount equal to {} usd\n- max sell for amount equal to {} usd\n - max active orders: {}",SYSTEM_MESSAGE, self.config.max_trade_value, sell_limit, self.config.max_active_orders) ,
-            images: None,
-            tool_calls: None,
-        });
-        self
-    }
+        let restrictions = vec![
+        format!("max buy for amount asset value equal to {} USDC",  self.config.max_trade_value),
+         format!("max sell for amount asset value equal to {} USDC",  sell_limit),
+        //   format!("max active orders: {}",  self.config.max_trade_value),
+        //    format!("max buy for amount equal to {} usd",  self.config.max_trade_value),
+        ];
+        
+          format!(r#"{}
+        
+RESTRICTIONS:
+{}
+        
+ALL TRADING PAIRS: {}
 
+        "#,SYSTEM_MESSAGE, restrictions.join("\n- "), self.config.as_ref().pairs().join(", "))
+    }
     pub fn add_user_message(mut self, msg: String) -> Self {
         self.messages.push(Message {
             role: "user".into(),
@@ -176,11 +184,11 @@ impl Bot {
         self
     }
 
-    pub fn add_context_message(&mut self, symbol: &str) {
+    pub async fn add_context_message(&mut self, symbol: &str) {
         let turns_remaining = self.config.bot_max_turns.saturating_sub(self.current_turn);
         
         // Get account information
-        let account_info = self.get_account_info();
+        let account_info = self.get_account_info().await;
         
         // Get trading history for this symbol
         let trading_history = self.trading_state.generate_context_summary(symbol);
@@ -198,14 +206,23 @@ impl Bot {
         });
     }
 
-    fn get_account_info(&self) -> String {
+    async fn get_account_info(&self) -> String {
         if self.config.binance_api_key == "noop" || self.config.binance_secret_key == "noop" {
             return "⚠️ Binance API credentials not configured. Trading decisions will be made without account context.\n\n💡 To enable account information, set BINANCE_API_KEY and BINANCE_SECRET_KEY environment variables.".to_string();
         }
         
-        // For now, just indicate that credentials are configured
-        // The actual account info retrieval is avoided to prevent runtime conflicts
-        "✅ Binance API credentials configured. Account information retrieval is available.\n\n💡 The bot can access your account data for informed trading decisions.".to_string()
+        let api_key = self.config.binance_api_key.clone();
+        let secret_key = self.config.binance_secret_key.clone();
+        
+        // Use spawn_blocking to run the blocking Binance client code in a separate thread
+        match tokio::task::spawn_blocking(move || {
+            BinanceClient::new(api_key, secret_key)
+                .and_then(|client| client.format_account_summary())
+        }).await {
+            Ok(Ok(summary)) => summary,
+            Ok(Err(e)) => format!("ERROR GETTING ACCOUNT SUMMARY: {}", e),
+            Err(e) => format!("ERROR SPAWNING BLOCKING TASK: {}", e),
+        }
     }
 
     /// Get the latest price timestamp for a symbol from Binance data
@@ -226,7 +243,7 @@ impl Bot {
         }
     }
 
-    pub async fn run_analysis_loop(&mut self, symbol: &str) -> Result<BotResult> {
+    pub async fn run_analysis_loop(&mut self, symbol: &str, extra_instructions:String) -> Result<BotResult> {
         // Check if we already made a decision for the current price timestamp
         if let Ok(Some(current_price_timestamp)) = self.get_latest_price_timestamp(symbol).await {
             if self.trading_state.has_decision_for_timestamp(symbol, current_price_timestamp) {
@@ -245,7 +262,7 @@ impl Bot {
         }
 
         self.current_turn = 0;
-        self.add_context_message(symbol);
+        self.add_context_message(symbol).await;
 
         let mut final_decision = None;
         let mut last_response = String::new();
@@ -303,7 +320,7 @@ impl Bot {
 
             // Handle tool calls if present
             if let Some(ref tc) = tool_calls {
-                info!("\n🔧 Executing tools...");
+                debug!("\n🔧 Executing tools...");
                 
                 // Execute tool calls first
                 let tool_responses = match self.ai.handle_tool_calls(tc.clone()).await {
@@ -476,11 +493,12 @@ impl Bot {
     }
 
     pub fn reset_conversation(&mut self) {
+        let content = (self).clone().get_system_message().clone();
         self.messages.clear();
         self.current_turn = 0;
         self.messages.push(Message {
             role: "system".into(),
-            content: SYSTEM_MESSAGE.into(),
+            content,
             images: None,
             tool_calls: None,
         });

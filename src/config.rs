@@ -18,7 +18,7 @@ pub    openai_api_key:String,
  pub   openai_model:String,
     #[default = 2]
   pub  max_active_orders:usize,
-    #[default = 20]
+    #[default = 50]
 pub    max_trade_value:usize,
     #[default = 3050]
  pub   web_ui_port:usize,
