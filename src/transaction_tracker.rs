@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use chrono::Utc;
+use chrono::{Utc, Local};
 use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
@@ -121,8 +121,8 @@ impl TransactionTracker {
         
         // For buy transactions, profit is 0 initially
         let transaction = Transaction {
-            date: Utc::now().format("%Y-%m-%d").to_string(),
-            time: Utc::now().format("%H:%M:%S").to_string(),
+            date: Local::now().format("%Y-%m-%d").to_string(),
+            time: Local::now().format("%H:%M:%S").to_string(),
             asset: asset.clone(),
             pair: pair.to_string(),
             transaction_type: "BUY".to_string(),
@@ -180,8 +180,8 @@ impl TransactionTracker {
         };
 
         let transaction = Transaction {
-            date: Utc::now().format("%Y-%m-%d").to_string(),
-            time: Utc::now().format("%H:%M:%S").to_string(),
+            date: Local::now().format("%Y-%m-%d").to_string(),
+            time: Local::now().format("%H:%M:%S").to_string(),
             asset: asset.clone(),
             pair: pair.to_string(),
             transaction_type: "SELL".to_string(),

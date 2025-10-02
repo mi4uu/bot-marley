@@ -62,12 +62,13 @@ tokio::spawn(async move {
 // Create bot instance
 let test_symbols = config.pairs();
 let mut bot = match Bot::new(config).await {
-    Ok(bot) => bot.add_system_message(),
+    Ok(bot) => bot,
     Err(e) => {
         return Err(eyre!("Failed to initialize trading bot: {}", e)
         .with_suggestion(|| "Check your API credentials and network connection"));
 }
 };
+bot.reset_conversation();
 
 info!("📊 Trading state loaded:");
 info!("  - Total previous runs: {}", bot.get_total_runs());

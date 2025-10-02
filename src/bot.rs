@@ -159,8 +159,8 @@ impl Bot {
         let sell_limit:f64=self.config.max_trade_value as f64;
         let sell_limit=sell_limit*1.1;
         let restrictions = vec![
-        format!("max buy for amount asset value equal to {} USDC",  self.config.max_trade_value),
-         format!("max sell for amount asset value equal to {} USDC",  sell_limit),
+        format!("buy asset value for < 10 USDC, equal {} USDC >",  self.config.max_trade_value),
+         format!("sell for amount asset value   < 10 USDC, {} USDC >",  sell_limit),
         //   format!("max active orders: {}",  self.config.max_trade_value),
         //    format!("max buy for amount equal to {} usd",  self.config.max_trade_value),
         ];
@@ -492,7 +492,7 @@ ALL TRADING PAIRS: {}
         })
     }
 
-    pub fn reset_conversation(&mut self) {
+    pub fn reset_conversation(&mut self) ->&mut Self{
         let content = (self).clone().get_system_message().clone();
         self.messages.clear();
         self.current_turn = 0;
@@ -502,6 +502,7 @@ ALL TRADING PAIRS: {}
             images: None,
             tool_calls: None,
         });
+        self
     }
 
     pub fn get_conversation_history(&self) -> &Vec<Message> {
