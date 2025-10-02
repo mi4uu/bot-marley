@@ -2,7 +2,7 @@
 mod tests {
     
     use crate::persistence::{PersistenceManager, TradingState, TradingDecision};
-    use chrono::Utc;
+    use chrono::{Utc, Local};
     use std::fs;
 
     #[test]
@@ -25,7 +25,7 @@ mod tests {
             amount: Some(100.0),
             confidence: 85,
             explanation: "Strong bullish signal detected".to_string(),
-            timestamp: Utc::now(),
+            timestamp: Local::now().with_timezone(&Utc),
             price_at_decision: Some(45000.0),
             price_timestamp: Some(1640995499999),
         };
@@ -36,7 +36,7 @@ mod tests {
             amount: None,
             confidence: 70,
             explanation: "Waiting for better entry point".to_string(),
-            timestamp: Utc::now(),
+            timestamp: Local::now().with_timezone(&Utc),
             price_at_decision: Some(3000.0),
             price_timestamp: Some(1640995799999),
         };

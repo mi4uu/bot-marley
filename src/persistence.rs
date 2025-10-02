@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, Local};
 use tracing::{info, warn, error};
 use std::io::{BufRead, BufReader};
 
@@ -57,7 +57,7 @@ impl TradingState {
     pub fn new() -> Self {
         Self {
             symbols: HashMap::new(),
-            last_updated: Some(Utc::now()),
+            last_updated: Some(Local::now().with_timezone(&Utc)),
             total_runs: 0,
         }
     }
@@ -93,7 +93,7 @@ impl TradingState {
         history.last_decision = Some(decision);
         history.total_decisions += 1;
         
-        self.last_updated = Some(Utc::now());
+        self.last_updated = Some(Local::now().with_timezone(&Utc));
     }
 
     pub fn get_symbol_history(&self, symbol: &str) -> Option<&SymbolHistory> {
@@ -106,7 +106,7 @@ impl TradingState {
 
     pub fn increment_runs(&mut self) {
         self.total_runs += 1;
-        self.last_updated = Some(Utc::now());
+        self.last_updated = Some(Local::now().with_timezone(&Utc));
     }
 
     /// Check if a decision already exists for the same symbol and price timestamp
@@ -314,7 +314,7 @@ impl PersistenceManager {
         if Path::new(&self.file_path).exists() {
             let backup_path = format!("{}.backup.{}", 
                 self.file_path, 
-                Utc::now().format("%Y%m%d_%H%M%S")
+                Local::now().format("%Y%m%d_%H%M%S")
             );
             fs::copy(&self.file_path, &backup_path)?;
             info!("🔄 Created backup at {}", backup_path);
@@ -337,7 +337,7 @@ mod tests {
             amount: Some(100.0),
             confidence: 85,
             explanation: "Strong bullish signal".to_string(),
-            timestamp: Utc::now(),
+            timestamp: Local::now().with_timezone(&Utc),
             price_at_decision: Some(45000.0),
             price_timestamp: Some(1640995499999),
         };

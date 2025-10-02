@@ -10,12 +10,13 @@ use std::fs::OpenOptions;
 use std::io::{self, Write};
 use chrono::Local;
 
+static RUN_BOT:bool=false;
+
+
 #[tokio::main]
 async fn main() -> Result<()> {
     // Install color-eyre for better error reporting
     color_eyre::install()?;
-    
-    
     dotenv::dotenv()
     .wrap_err("Failed to load .env file")
     .with_suggestion(|| "Make sure .env file exists and is readable")?;
@@ -71,12 +72,32 @@ let mut bot = match Bot::new(config).await {
 bot.reset_conversation();
 
 info!("📊 Trading state loaded:");
+
 info!("  - Total previous runs: {}", bot.get_total_runs());
 
+
+if RUN_BOT==false{
+  return  Ok(());
+}
+
 loop {
+
+let latest_news=match botmarley::utils::cryptonews::fetch_crypto_news().await {
+    Ok(news) => {
+        Some(format!("📰 Latest Crypto News:
+{}",news))
+     
+    }
+    Err(e) => {
+        error!("Failed to fetch crypto news: {}", e);
+        None
+    }
+};
+if let Some(news) = latest_news {
+    bot = bot.add_user_message(news);
+}
         let now = Local::now();
         let file_path = format!("logs_md/{}.md", now.format("%Y-%m-%d_%H-%M"));
-
         // Increment run counter at the start of each loop
         bot.increment_run_counter();
         let run_number = bot.get_total_runs();

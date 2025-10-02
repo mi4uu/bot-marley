@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use futures_util::StreamExt;
 use tracing::{info, debug, warn, info_span};
-use chrono::Utc;
+use chrono::{Utc, Local};
 use color_eyre::eyre::{Result, eyre};
 use color_eyre::Section;
 
@@ -368,7 +368,7 @@ ALL TRADING PAIRS: {}
                                         amount: Some(amount),
                                         confidence,
                                         explanation,
-                                        timestamp: Utc::now(),
+                                        timestamp: Local::now().with_timezone(&Utc),
                                         price_at_decision: None, // TODO: Get current price
                                         price_timestamp,
                                     };
@@ -398,7 +398,7 @@ ALL TRADING PAIRS: {}
                                         amount: Some(amount),
                                         confidence,
                                         explanation,
-                                        timestamp: Utc::now(),
+                                        timestamp: Local::now().with_timezone(&Utc),
                                         price_at_decision: None, // TODO: Get current price
                                         price_timestamp,
                                     };
@@ -426,7 +426,7 @@ ALL TRADING PAIRS: {}
                                         amount: None,
                                         confidence,
                                         explanation,
-                                        timestamp: Utc::now(),
+                                        timestamp: Local::now().with_timezone(&Utc),
                                         price_at_decision: None, // TODO: Get current price
                                         price_timestamp,
                                     };
