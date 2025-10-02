@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use smart_default::SmartDefault;
 
 
-#[derive(Debug,Serialize,Deserialize,SmartDefault)]
+#[derive(Debug,Serialize,Deserialize,SmartDefault,Clone)]
 #[serde(default)]
 pub struct Config{
     #[default = "noop"]

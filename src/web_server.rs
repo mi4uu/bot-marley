@@ -13,6 +13,8 @@ use tracing::{error, info};
 use color_eyre::eyre::{Result, WrapErr};
 use regex::Regex;
 
+use crate::portfolio::{load_portfolio_history, get_portfolio_summary, PortfolioSnapshot, PortfolioSummary};
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LogEntry {
     pub timestamp: String,
@@ -87,6 +89,8 @@ pub async fn create_router() -> Router {
         .route("/api/logs/{filename}", get(get_log_entries))
         .route("/api/markdown", get(list_markdown_files))
         .route("/api/markdown/{filename}", get(get_markdown_content))
+        .route("/api/portfolio", get(get_portfolio_data))
+        .route("/api/portfolio/summary", get(get_portfolio_summary_endpoint))
         .nest_service("/static", get_service(ServeDir::new("static")))
 }
 
@@ -445,6 +449,29 @@ fn process_markdown_content(content: &str) -> String {
     }
     
     processed_lines.join("\n")
+}
+
+async fn get_portfolio_data() -> Result<Json<Vec<PortfolioSnapshot>>, StatusCode> {
+    match load_portfolio_history() {
+        Ok(snapshots) => Ok(Json(snapshots)),
+        Err(e) => {
+            error!("Failed to load portfolio history: {}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+    }
+}
+
+async fn get_portfolio_summary_endpoint() -> Result<Json<Option<PortfolioSummary>>, StatusCode> {
+    match load_portfolio_history() {
+        Ok(snapshots) => {
+            let summary = get_portfolio_summary(&snapshots);
+            Ok(Json(summary))
+        }
+        Err(e) => {
+            error!("Failed to load portfolio history for summary: {}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+    }
 }
 
 pub async fn start_web_server(port: u16) -> Result<()> {

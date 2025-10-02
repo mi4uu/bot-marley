@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BotMarley - Log Viewer</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link rel="shortcut icon" type="image/png" href="/static/logo.png">
     <style>
         * {
             margin: 0;
@@ -621,7 +623,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🤖 BotMarley Log Viewer</h1>
+            <h1><img src="/static/logo.png" alt="BotMarley Logo" style="width: 48px; height: 48px; margin-right: 15px; vertical-align: middle;"> BotMarley Log Viewer</h1>
             <p>Monitor and analyze your crypto trading bot's activity with real-time log visualization</p>
         </div>
 
@@ -629,6 +631,7 @@
         <div class="tab-nav">
             <button class="tab-button active" onclick="switchTab('logs')">📋 Log Viewer</button>
             <button class="tab-button" onclick="switchTab('markdown')">📖 Markdown Docs</button>
+            <button class="tab-button" onclick="switchTab('portfolio')">💰 Portfolio</button>
         </div>
 
         <!-- Logs Tab -->
@@ -728,6 +731,38 @@
                 </div>
             </div>
         </div>
+
+        <!-- Portfolio Tab -->
+        <div id="portfolio-tab" class="tab-content">
+            <div class="controls">
+                <h2>💰 Portfolio Analytics</h2>
+                <div class="button-group">
+                    <button onclick="refreshPortfolio()">Refresh Portfolio</button>
+                    <button onclick="exportPortfolioData()">Export Data</button>
+                </div>
+            </div>
+
+            <div id="portfolioSummary" class="log-files">
+                <h2>📊 Portfolio Summary</h2>
+                <div id="portfolioSummaryContent">
+                    <div class="loading">Loading portfolio summary...</div>
+                </div>
+            </div>
+
+            <div class="log-entries">
+                <h2>📈 Portfolio Value Over Time</h2>
+                <div id="portfolioChart" style="height: 400px; margin-bottom: 20px;">
+                    <canvas id="portfolioCanvas" width="800" height="400"></canvas>
+                </div>
+            </div>
+
+            <div class="log-entries">
+                <h2>🏦 Asset Holdings</h2>
+                <div id="portfolioTable">
+                    <div class="loading">Loading portfolio data...</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -736,12 +771,17 @@
         let autoRefreshInterval = null;
         let currentMarkdownFile = null;
         let currentTab = 'logs';
+        let portfolioData = [];
+        let portfolioChart = null;
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             initializeFromURL();
             loadLogFiles();
             loadMarkdownFiles();
+            if (currentTab === 'portfolio') {
+                loadPortfolioData();
+            }
         });
 
         // URL Management
@@ -749,7 +789,9 @@
             const urlParams = new URLSearchParams(window.location.search);
             const tab = urlParams.get('tab') || 'logs';
             
-            if (tab === 'markdown') {
+            if (tab === 'portfolio') {
+                switchTab('portfolio');
+            } else if (tab === 'markdown') {
                 switchTab('markdown');
                 const file = urlParams.get('file');
                 if (file) {
@@ -824,6 +866,11 @@
 
             currentTab = tabName;
             updateURL();
+            
+            // Load data when switching to portfolio tab
+            if (tabName === 'portfolio') {
+                loadPortfolioData();
+            }
         }
 
         // Log Functions
@@ -1215,9 +1262,255 @@
                         e.preventDefault();
                         switchTab('markdown');
                         break;
+                    case '3':
+                        e.preventDefault();
+                        switchTab('portfolio');
+                        break;
                 }
             }
         });
+
+        // Portfolio Functions
+        async function loadPortfolioData() {
+            try {
+                const [dataResponse, summaryResponse] = await Promise.all([
+                    fetch('/api/portfolio'),
+                    fetch('/api/portfolio/summary')
+                ]);
+                
+                if (dataResponse.ok && summaryResponse.ok) {
+                    portfolioData = await dataResponse.json();
+                    const summary = await summaryResponse.json();
+                    
+                    displayPortfolioSummary(summary);
+                    displayPortfolioChart(portfolioData);
+                    displayPortfolioTable(portfolioData);
+                } else {
+                    throw new Error('Failed to fetch portfolio data');
+                }
+            } catch (error) {
+                console.error('Failed to load portfolio data:', error);
+                document.getElementById('portfolioSummaryContent').innerHTML =
+                    '<div class="error-message">Failed to load portfolio data</div>';
+                document.getElementById('portfolioTable').innerHTML =
+                    '<div class="error-message">Failed to load portfolio data</div>';
+            }
+        }
+
+        function displayPortfolioSummary(summary) {
+            const container = document.getElementById('portfolioSummaryContent');
+            
+            if (!summary) {
+                container.innerHTML = '<div class="loading">No portfolio data available</div>';
+                return;
+            }
+
+            const changeColor = summary.value_change_percent >= 0 ? '#28a745' : '#dc3545';
+            const changeIcon = summary.value_change_percent >= 0 ? '📈' : '📉';
+            const btcChangeColor = summary.btc_change_percent >= 0 ? '#28a745' : '#dc3545';
+            const btcChangeIcon = summary.btc_change_percent >= 0 ? '📈' : '📉';
+
+            container.innerHTML = `
+                <div class="log-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">$${summary.current_value_usdc.toFixed(2)}</div>
+                        <div class="stat-label">Total Value (USDC)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${summary.current_value_btc.toFixed(6)} BTC</div>
+                        <div class="stat-label">Total Value (BTC)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: ${changeColor}">
+                            ${changeIcon} ${summary.value_change_percent.toFixed(2)}%
+                        </div>
+                        <div class="stat-label">Portfolio Change</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$${summary.current_btc_price.toFixed(2)}</div>
+                        <div class="stat-label">BTC Price</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: ${btcChangeColor}">
+                            ${btcChangeIcon} ${summary.btc_change_percent.toFixed(2)}%
+                        </div>
+                        <div class="stat-label">BTC Change</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${summary.current_asset_count}</div>
+                        <div class="stat-label">Assets</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayPortfolioChart(data) {
+            const canvas = document.getElementById('portfolioCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            if (data.length === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('No portfolio data available', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Prepare data
+            const portfolioValues = data.map(d => d.total_value_usdc);
+            const btcPrices = data.map(d => d.btc_price_usdc);
+            
+            const maxPortfolioValue = Math.max(...portfolioValues);
+            const minPortfolioValue = Math.min(...portfolioValues);
+            const maxBtcPrice = Math.max(...btcPrices);
+            const minBtcPrice = Math.min(...btcPrices);
+            
+            const padding = 40;
+            const chartWidth = canvas.width - 2 * padding;
+            const chartHeight = canvas.height - 2 * padding;
+            
+            // Draw axes
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+            
+            // Draw portfolio value line
+            if (portfolioValues.length > 1) {
+                ctx.strokeStyle = '#2a5298';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                for (let i = 0; i < portfolioValues.length; i++) {
+                    const x = padding + (i / (portfolioValues.length - 1)) * chartWidth;
+                    const y = canvas.height - padding - ((portfolioValues[i] - minPortfolioValue) / (maxPortfolioValue - minPortfolioValue)) * chartHeight;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+            }
+            
+            // Draw BTC price line (scaled to fit)
+            if (btcPrices.length > 1) {
+                ctx.strokeStyle = '#f7931a';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                
+                for (let i = 0; i < btcPrices.length; i++) {
+                    const x = padding + (i / (btcPrices.length - 1)) * chartWidth;
+                    const y = canvas.height - padding - ((btcPrices[i] - minBtcPrice) / (maxBtcPrice - minBtcPrice)) * chartHeight;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            
+            // Add legend
+            ctx.fillStyle = '#2a5298';
+            ctx.fillRect(padding, 10, 20, 10);
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText('Portfolio Value (USDC)', padding + 25, 20);
+            
+            ctx.fillStyle = '#f7931a';
+            ctx.fillRect(padding + 200, 10, 20, 10);
+            ctx.fillStyle = '#333';
+            ctx.fillText('BTC Price (USDC)', padding + 225, 20);
+        }
+
+        function displayPortfolioTable(data) {
+            const container = document.getElementById('portfolioTable');
+            
+            if (data.length === 0) {
+                container.innerHTML = '<div class="loading">No portfolio data available</div>';
+                return;
+            }
+
+            // Get the latest snapshot
+            const latest = data[data.length - 1];
+            
+            let tableHtml = `
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                        <thead>
+                            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                <th style="padding: 12px; text-align: left; border: 1px solid #dee2e6;">Asset</th>
+                                <th style="padding: 12px; text-align: right; border: 1px solid #dee2e6;">Balance</th>
+                                <th style="padding: 12px; text-align: right; border: 1px solid #dee2e6;">Price (USDC)</th>
+                                <th style="padding: 12px; text-align: right; border: 1px solid #dee2e6;">Value (USDC)</th>
+                                <th style="padding: 12px; text-align: right; border: 1px solid #dee2e6;">Value (BTC)</th>
+                                <th style="padding: 12px; text-align: right; border: 1px solid #dee2e6;">% of Portfolio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            for (const asset of latest.assets) {
+                const percentageColor = asset.percentage_of_portfolio > 20 ? '#28a745' :
+                                      asset.percentage_of_portfolio > 10 ? '#ffc107' : '#6c757d';
+                
+                tableHtml += `
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 10px; border: 1px solid #dee2e6; font-weight: 600;">${asset.asset}</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6; text-align: right;">${asset.balance.toFixed(6)}</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6; text-align: right;">$${asset.price_usdc.toFixed(4)}</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6; text-align: right; font-weight: 600;">$${asset.value_usdc.toFixed(2)}</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6; text-align: right;">${asset.value_btc.toFixed(8)}</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6; text-align: right; color: ${percentageColor}; font-weight: 600;">
+                            ${asset.percentage_of_portfolio.toFixed(1)}%
+                        </td>
+                    </tr>
+                `;
+            }
+
+            tableHtml += `
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 0.9em; color: #666;">
+                    <strong>Last Updated:</strong> ${new Date(latest.timestamp).toLocaleString()} |
+                    <strong>Run #${latest.run_number}</strong>
+                </div>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+
+        function refreshPortfolio() {
+            loadPortfolioData();
+        }
+
+        function exportPortfolioData() {
+            if (portfolioData.length === 0) {
+                alert('No portfolio data to export');
+                return;
+            }
+
+            const dataStr = JSON.stringify(portfolioData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'portfolio_data.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
 
         // Handle browser back/forward
         window.addEventListener('popstate', function(e) {

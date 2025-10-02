@@ -2,6 +2,8 @@ use std::time::Duration;
 use botmarley::bot::Bot;
 use botmarley::logging::{CustomJsonFormatter, LocalTimeFileAppender};
 use botmarley::web_server;
+use botmarley::portfolio::PortfolioTracker;
+use botmarley::binance_client::BinanceClient;
 use tracing::{info, error, info_span, Instrument};
 use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 use color_eyre::eyre::{Result, WrapErr, eyre};
@@ -62,7 +64,7 @@ tokio::spawn(async move {
 
 // Create bot instance
 let test_symbols = config.pairs();
-let mut bot = match Bot::new(config).await {
+let mut bot = match Bot::new(config.clone()).await {
     Ok(bot) => bot,
     Err(e) => {
         return Err(eyre!("Failed to initialize trading bot: {}", e)
@@ -70,6 +72,13 @@ let mut bot = match Bot::new(config).await {
 }
 };
 bot.reset_conversation();
+
+// Create portfolio tracker
+let binance_client = BinanceClient::new(
+    config.binance_api_key.clone(),
+    config.binance_secret_key.clone()
+)?;
+let portfolio_tracker = PortfolioTracker::new(binance_client);
 
 info!("📊 Trading state loaded:");
 
@@ -157,6 +166,18 @@ if let Some(news) = latest_news {
                 // Reset for next symbol
                 bot.reset_conversation();
             }.instrument(symbol_span).await;
+        }
+        
+        // Capture portfolio snapshot after completing all symbol analyses
+        info!("📊 Capturing portfolio snapshot after run #{}", run_number);
+        match portfolio_tracker.track_and_save_portfolio(run_number as u32).await {
+            Ok(snapshot) => {
+                info!("💰 Portfolio snapshot captured: ${:.2} USDC ({:.6} BTC) across {} assets",
+                      snapshot.total_value_usdc, snapshot.total_value_btc, snapshot.asset_count);
+            }
+            Err(e) => {
+                error!("❌ Failed to capture portfolio snapshot: {:?}", e);
+            }
         }
         
         info!("✅ All analyses completed! Waiting 1 minute...");
