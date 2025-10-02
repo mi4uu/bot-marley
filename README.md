@@ -1,7 +1,7 @@
 # BotMarley - AI-Powered Crypto Trading Bot
 
 <div align="center">
-  <img src="static/logo.png" alt="BotMarley Logo" width="200"/>
+  <img src="static/logo.png" alt="BotMarley Logo" width="600"/>
   
   [![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
   [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
