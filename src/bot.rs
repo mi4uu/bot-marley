@@ -215,9 +215,12 @@ ALL TRADING PAIRS: {}
         let secret_key = self.config.binance_secret_key.clone();
         
         // Use spawn_blocking to run the blocking Binance client code in a separate thread
-        match tokio::task::spawn_blocking(move || {
-            BinanceClient::new(api_key, secret_key)
-                .and_then(|client| client.format_account_summary())
+        match tokio::task::spawn_blocking(move || -> Result<String> {
+            let client = BinanceClient::new(api_key, secret_key)?;
+            let account_summary = client.format_account_summary()?;
+            let recent_transactions = client.format_recent_transactions(Some(10))?;
+            
+            Ok(format!("{}\n{}", account_summary, recent_transactions))
         }).await {
             Ok(Ok(summary)) => summary,
             Ok(Err(e)) => format!("ERROR GETTING ACCOUNT SUMMARY: {}", e),

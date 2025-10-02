@@ -25,6 +25,18 @@ pub struct UserOrder {
     pub time: u64,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RecentTransaction {
+    pub symbol: String,
+    pub side: String, // BUY or SELL
+    pub quantity: String,
+    pub price: String,
+    pub commission: String,
+    pub commission_asset: String,
+    pub time: u64,
+    pub is_buyer: bool,
+}
+
 pub struct BinanceClient {
     account: Account,
 }
@@ -92,6 +104,103 @@ impl BinanceClient {
     pub fn get_recent_orders(&self, _symbol: Option<String>, _limit: Option<u16>) -> Result<Vec<UserOrder>> {
         // For now, just return open orders as the binance crate API is different
         self.get_open_orders()
+    }
+
+    pub fn get_recent_transactions(&self, limit: Option<u16>) -> Result<Vec<RecentTransaction>> {
+        let limit = limit.unwrap_or(10);
+        
+        // Read from local transaction file instead of API for now
+        // This provides more reliable access to transaction history
+        use std::fs::File;
+        use std::io::{BufRead, BufReader};
+        use std::path::Path;
+        
+        let transactions_file = "data/transactions.jsonl";
+        let mut recent_transactions = Vec::new();
+        
+        if !Path::new(transactions_file).exists() {
+            return Ok(recent_transactions);
+        }
+        
+        match File::open(transactions_file) {
+            Ok(file) => {
+                let reader = BufReader::new(file);
+                let mut all_transactions = Vec::new();
+                
+                for line in reader.lines() {
+                    if let Ok(line) = line {
+                        if line.trim().is_empty() {
+                            continue;
+                        }
+                        if let Ok(transaction) = serde_json::from_str::<crate::transaction_tracker::Transaction>(&line) {
+                            // Convert Transaction to RecentTransaction
+                            let timestamp = chrono::NaiveDateTime::parse_from_str(
+                                &format!("{} {}", transaction.date, transaction.time),
+                                "%Y-%m-%d %H:%M:%S"
+                            ).unwrap_or_default().and_utc().timestamp() as u64 * 1000;
+                            
+                            let is_buyer = transaction.transaction_type == "BUY";
+                            all_transactions.push(RecentTransaction {
+                                symbol: transaction.pair,
+                                side: transaction.transaction_type,
+                                quantity: transaction.amount.to_string(),
+                                price: transaction.price_per_unit.to_string(),
+                                commission: "0".to_string(),
+                                commission_asset: "".to_string(),
+                                time: timestamp,
+                                is_buyer,
+                            });
+                        }
+                    }
+                }
+                
+                // Sort by time descending (most recent first)
+                all_transactions.sort_by(|a, b| b.time.cmp(&a.time));
+                
+                // Take only the requested limit
+                recent_transactions = all_transactions.into_iter().take(limit as usize).collect();
+            }
+            Err(e) => {
+                return Err(eyre!("Failed to read transactions file: {}", e));
+            }
+        }
+        
+        Ok(recent_transactions)
+    }
+
+    pub fn format_recent_transactions(&self, limit: Option<u16>) -> Result<String> {
+        let transactions = self.get_recent_transactions(limit)
+            .wrap_err("Failed to get recent transactions for formatting")?;
+        
+        if transactions.is_empty() {
+            return Ok("📋 **RECENT TRANSACTIONS:** No recent transactions found.\n".to_string());
+        }
+        
+        let mut summary = String::new();
+        summary.push_str("📋 **RECENT TRANSACTIONS:**\n");
+        
+        for (i, tx) in transactions.iter().enumerate() {
+            let datetime = chrono::DateTime::from_timestamp(tx.time as i64 / 1000, 0)
+                .unwrap_or_default()
+                .format("%Y-%m-%d %H:%M:%S");
+            
+            let side_emoji = if tx.is_buyer { "🟢" } else { "🔴" };
+            
+            summary.push_str(&format!(
+                "{}. {} {} {} {} at {} ({})\n",
+                i + 1,
+                side_emoji,
+                tx.side,
+                tx.quantity,
+                tx.symbol,
+                tx.price,
+                datetime
+            ));
+        }
+        
+        summary.push_str("\nUse this transaction history to understand recent trading patterns and make informed decisions.\n");
+        
+        Ok(summary)
     }
 
     pub fn format_account_summary(&self) -> Result<String> {
