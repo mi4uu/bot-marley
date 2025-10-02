@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,6 +46,50 @@
         .header p {
             color: #666;
             font-size: 1.1em;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+        }
+
+        .tab-button:hover:not(.active) {
+            background: rgba(42, 82, 152, 0.1);
+            color: #2a5298;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .controls {
@@ -378,6 +423,173 @@
             border: 1px solid #f5c6cb;
         }
 
+        /* Markdown Viewer Styles */
+        .markdown-files {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .markdown-file-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            margin-bottom: 10px;
+        }
+
+        .markdown-file-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #2a5298;
+        }
+
+        .markdown-file-card.selected {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        .markdown-viewer {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .toc {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .toc h3 {
+            color: #2a5298;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc li {
+            margin-bottom: 5px;
+        }
+
+        .toc a {
+            color: #666;
+            text-decoration: none;
+            padding: 5px 0;
+            display: block;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .toc a:hover {
+            color: #2a5298;
+            background: rgba(42, 82, 152, 0.1);
+            padding-left: 10px;
+        }
+
+        .toc .level-1 { font-weight: 600; }
+        .toc .level-2 { padding-left: 15px; }
+        .toc .level-3 { padding-left: 30px; }
+        .toc .level-4 { padding-left: 45px; }
+        .toc .level-5 { padding-left: 60px; }
+        .toc .level-6 { padding-left: 75px; }
+
+        .markdown-content {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .markdown-content h1,
+        .markdown-content h2,
+        .markdown-content h3,
+        .markdown-content h4,
+        .markdown-content h5,
+        .markdown-content h6 {
+            color: #2a5298;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .markdown-content h1 { font-size: 2em; }
+        .markdown-content h2 { font-size: 1.5em; }
+        .markdown-content h3 { font-size: 1.3em; }
+
+        .markdown-content p {
+            margin-bottom: 15px;
+        }
+
+        .markdown-content pre {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .markdown-content code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .markdown-content blockquote {
+            border-left: 4px solid #2a5298;
+            padding-left: 15px;
+            margin: 15px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Think block styles */
+        .think-block {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .think-block summary {
+            background: #ffc107;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        .think-block summary:hover {
+            background: #e0a800;
+        }
+
+        .think-content {
+            padding: 15px;
+            background: #fffbf0;
+            border-radius: 0 0 8px 8px;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -395,6 +607,14 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+
+            .markdown-viewer {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-nav {
+                flex-wrap: wrap;
+            }
         }
     </style>
 </head>
@@ -405,79 +625,108 @@
             <p>Monitor and analyze your crypto trading bot's activity with real-time log visualization</p>
         </div>
 
-        <div class="controls">
-            <div class="controls-grid">
-                <div class="control-group">
-                    <label for="levelFilter">Log Level</label>
-                    <select id="levelFilter">
-                        <option value="">All Levels</option>
-                        <option value="ERROR">Error</option>
-                        <option value="WARN">Warning</option>
-                        <option value="INFO">Info</option>
-                        <option value="DEBUG">Debug</option>
-                    </select>
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-button active" onclick="switchTab('logs')">📋 Log Viewer</button>
+            <button class="tab-button" onclick="switchTab('markdown')">📖 Markdown Docs</button>
+        </div>
+
+        <!-- Logs Tab -->
+        <div id="logs-tab" class="tab-content active">
+            <div class="controls">
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label for="levelFilter">Log Level</label>
+                        <select id="levelFilter">
+                            <option value="">All Levels</option>
+                            <option value="ERROR">Error</option>
+                            <option value="WARN">Warning</option>
+                            <option value="INFO">Info</option>
+                            <option value="DEBUG">Debug</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="symbolFilter">Symbol</label>
+                        <input type="text" id="symbolFilter" placeholder="e.g., BTCUSDT">
+                    </div>
+                    <div class="control-group">
+                        <label for="runFilter">Run Number</label>
+                        <input type="number" id="runFilter" placeholder="e.g., 1">
+                    </div>
+                    <div class="control-group">
+                        <label for="turnFilter">Turn Number</label>
+                        <input type="number" id="turnFilter" placeholder="e.g., 5">
+                    </div>
+                    <div class="control-group">
+                        <label for="targetFilter">Target</label>
+                        <input type="text" id="targetFilter" placeholder="e.g., botmarley::bot">
+                    </div>
+                    <div class="control-group">
+                        <label for="limitFilter">Entries per page</label>
+                        <select id="limitFilter">
+                            <option value="50">50</option>
+                            <option value="100" selected>100</option>
+                            <option value="200">200</option>
+                            <option value="500">500</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="control-group">
-                    <label for="symbolFilter">Symbol</label>
-                    <input type="text" id="symbolFilter" placeholder="e.g., BTCUSDT">
-                </div>
-                <div class="control-group">
-                    <label for="runFilter">Run Number</label>
-                    <input type="number" id="runFilter" placeholder="e.g., 1">
-                </div>
-                <div class="control-group">
-                    <label for="turnFilter">Turn Number</label>
-                    <input type="number" id="turnFilter" placeholder="e.g., 5">
-                </div>
-                <div class="control-group">
-                    <label for="targetFilter">Target</label>
-                    <input type="text" id="targetFilter" placeholder="e.g., botmarley::bot">
-                </div>
-                <div class="control-group">
-                    <label for="limitFilter">Entries per page</label>
-                    <select id="limitFilter">
-                        <option value="50">50</option>
-                        <option value="100" selected>100</option>
-                        <option value="200">200</option>
-                        <option value="500">500</option>
-                    </select>
+                <div class="button-group">
+                    <button onclick="applyFilters()">Apply Filters</button>
+                    <button onclick="clearFilters()">Clear Filters</button>
+                    <button onclick="refreshLogs()">Refresh</button>
+                    <button onclick="autoRefresh()">Auto Refresh</button>
                 </div>
             </div>
-            <div class="button-group">
-                <button onclick="applyFilters()">Apply Filters</button>
-                <button onclick="clearFilters()">Clear Filters</button>
-                <button onclick="refreshLogs()">Refresh</button>
-                <button onclick="autoRefresh()">Auto Refresh</button>
+
+            <div class="log-files">
+                <h2>📁 Available Log Files</h2>
+                <div id="logFilesList" class="log-file-grid">
+                    <div class="loading">Loading log files...</div>
+                </div>
+            </div>
+
+            <div class="log-entries">
+                <h2>📋 Log Entries</h2>
+                <div id="logStats" class="log-stats" style="display: none;">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalEntries">0</div>
+                        <div class="stat-label">Total Entries</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="filteredEntries">0</div>
+                        <div class="stat-label">Filtered Entries</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentPage">1</div>
+                        <div class="stat-label">Current Page</div>
+                    </div>
+                </div>
+                <div id="logEntriesList">
+                    <div class="loading">Select a log file to view entries...</div>
+                </div>
+                <div id="pagination" class="pagination" style="display: none;"></div>
             </div>
         </div>
 
-        <div class="log-files">
-            <h2>📁 Available Log Files</h2>
-            <div id="logFilesList" class="log-file-grid">
-                <div class="loading">Loading log files...</div>
+        <!-- Markdown Tab -->
+        <div id="markdown-tab" class="tab-content">
+            <div class="markdown-files">
+                <h2>📖 Available Markdown Documents</h2>
+                <div id="markdownFilesList">
+                    <div class="loading">Loading markdown files...</div>
+                </div>
             </div>
-        </div>
 
-        <div class="log-entries">
-            <h2>📋 Log Entries</h2>
-            <div id="logStats" class="log-stats" style="display: none;">
-                <div class="stat-item">
-                    <div class="stat-value" id="totalEntries">0</div>
-                    <div class="stat-label">Total Entries</div>
+            <div id="markdownViewer" class="markdown-viewer" style="display: none;">
+                <div class="toc">
+                    <h3>📑 Table of Contents</h3>
+                    <ul id="tocList"></ul>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="filteredEntries">0</div>
-                    <div class="stat-label">Filtered Entries</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="currentPage">1</div>
-                    <div class="stat-label">Current Page</div>
+                <div class="markdown-content" id="markdownContent">
+                    <div class="loading">Select a document to view...</div>
                 </div>
             </div>
-            <div id="logEntriesList">
-                <div class="loading">Select a log file to view entries...</div>
-            </div>
-            <div id="pagination" class="pagination" style="display: none;"></div>
         </div>
     </div>
 
@@ -485,12 +734,99 @@
         let currentLogFile = null;
         let currentOffset = 0;
         let autoRefreshInterval = null;
+        let currentMarkdownFile = null;
+        let currentTab = 'logs';
 
-        // Load log files on page load
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            initializeFromURL();
             loadLogFiles();
+            loadMarkdownFiles();
         });
 
+        // URL Management
+        function initializeFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab') || 'logs';
+            
+            if (tab === 'markdown') {
+                switchTab('markdown');
+                const file = urlParams.get('file');
+                if (file) {
+                    selectMarkdownFile(file);
+                }
+            } else {
+                // Initialize log filters from URL
+                const level = urlParams.get('level');
+                const symbol = urlParams.get('symbol');
+                const run = urlParams.get('run');
+                const turn = urlParams.get('turn');
+                const target = urlParams.get('target');
+                const limit = urlParams.get('limit');
+                const offset = urlParams.get('offset');
+                const logFile = urlParams.get('logFile');
+
+                if (level) document.getElementById('levelFilter').value = level;
+                if (symbol) document.getElementById('symbolFilter').value = symbol;
+                if (run) document.getElementById('runFilter').value = run;
+                if (turn) document.getElementById('turnFilter').value = turn;
+                if (target) document.getElementById('targetFilter').value = target;
+                if (limit) document.getElementById('limitFilter').value = limit;
+                if (offset) currentOffset = parseInt(offset) || 0;
+                
+                if (logFile) {
+                    currentLogFile = logFile;
+                    setTimeout(() => selectLogFileFromURL(logFile), 500);
+                }
+            }
+        }
+
+        function updateURL() {
+            const params = new URLSearchParams();
+            params.set('tab', currentTab);
+
+            if (currentTab === 'logs') {
+                const filters = getFilters();
+                Object.keys(filters).forEach(key => {
+                    if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+                        params.set(key, filters[key]);
+                    }
+                });
+                
+                if (currentOffset > 0) {
+                    params.set('offset', currentOffset);
+                }
+                
+                if (currentLogFile) {
+                    params.set('logFile', currentLogFile);
+                }
+            } else if (currentTab === 'markdown' && currentMarkdownFile) {
+                params.set('file', currentMarkdownFile);
+            }
+
+            const newURL = window.location.pathname + '?' + params.toString();
+            window.history.replaceState({}, '', newURL);
+        }
+
+        // Tab Management
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            currentTab = tabName;
+            updateURL();
+        }
+
+        // Log Functions
         async function loadLogFiles() {
             try {
                 const response = await fetch('/api/logs');
@@ -504,7 +840,7 @@
                 }
                 
                 container.innerHTML = logFiles.map(file => `
-                    <div class="log-file-card" onclick="selectLogFile('${file.filename}')">
+                    <div class="log-file-card" onclick="selectLogFile('${file.filename}', this)">
                         <div class="log-file-info">
                             <div class="log-file-name">${file.filename}</div>
                         </div>
@@ -523,15 +859,29 @@
             }
         }
 
-        function selectLogFile(filename) {
+        function selectLogFile(filename, element) {
             // Update UI
             document.querySelectorAll('.log-file-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            event.target.closest('.log-file-card').classList.add('selected');
+            if (element) {
+                element.closest('.log-file-card').classList.add('selected');
+            }
             
             currentLogFile = filename;
             currentOffset = 0;
+            loadLogEntries();
+            updateURL();
+        }
+
+        function selectLogFileFromURL(filename) {
+            const cards = document.querySelectorAll('.log-file-card');
+            for (let card of cards) {
+                if (card.textContent.includes(filename)) {
+                    card.classList.add('selected');
+                    break;
+                }
+            }
             loadLogEntries();
         }
 
@@ -656,6 +1006,7 @@
             const limit = parseInt(getFilters().limit || 100);
             currentOffset = (page - 1) * limit;
             loadLogEntries();
+            updateURL();
         }
 
         function getFilters() {
@@ -675,6 +1026,7 @@
         function applyFilters() {
             currentOffset = 0;
             loadLogEntries();
+            updateURL();
         }
 
         function clearFilters() {
@@ -707,6 +1059,122 @@
             }
         }
 
+        // Markdown Functions
+        async function loadMarkdownFiles() {
+            try {
+                const response = await fetch('/api/markdown');
+                const markdownFiles = await response.json();
+                
+                const container = document.getElementById('markdownFilesList');
+                
+                if (markdownFiles.length === 0) {
+                    container.innerHTML = '<div class="loading">No markdown files found</div>';
+                    return;
+                }
+                
+                container.innerHTML = markdownFiles.map(file => `
+                    <div class="markdown-file-card" onclick="selectMarkdownFile('${file.filename}', this)">
+                        <div class="log-file-info">
+                            <div class="log-file-name">${file.title}</div>
+                        </div>
+                        <div class="log-file-stats">
+                            <div><strong>File:</strong> ${file.filename}</div>
+                            <div><strong>Date:</strong> ${file.date || 'N/A'}</div>
+                            <div><strong>Size:</strong> ${formatFileSize(file.size)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load markdown files:', error);
+                document.getElementById('markdownFilesList').innerHTML =
+                    '<div class="error-message">Failed to load markdown files</div>';
+            }
+        }
+
+        async function selectMarkdownFile(filename) {
+            // Update UI
+            document.querySelectorAll('.markdown-file-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.markdown-file-card').classList.add('selected');
+            
+            currentMarkdownFile = filename;
+            updateURL();
+            
+            try {
+                document.getElementById('markdownContent').innerHTML = '<div class="loading">Loading document...</div>';
+                document.getElementById('markdownViewer').style.display = 'grid';
+                
+                const response = await fetch(`/api/markdown/${filename}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                
+                displayMarkdownContent(data);
+                displayTOC(data.toc);
+                
+            } catch (error) {
+                console.error('Failed to load markdown content:', error);
+                document.getElementById('markdownContent').innerHTML =
+                    '<div class="error-message">Failed to load markdown content</div>';
+            }
+        }
+
+        function displayMarkdownContent(data) {
+            const container = document.getElementById('markdownContent');
+            
+            // Convert markdown to HTML (basic conversion)
+            let html = data.content
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+                .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+                .replace(/\*(.*)\*/gim, '<em>$1</em>')
+                .replace(/`([^`]+)`/gim, '<code>$1</code>')
+                .replace(/```([^```]+)```/gim, '<pre><code>$1</code></pre>')
+                .replace(/\n\n/gim, '</p><p>')
+                .replace(/\n/gim, '<br>');
+            
+            // Wrap in paragraphs
+            html = '<p>' + html + '</p>';
+            
+            // Fix empty paragraphs
+            html = html.replace(/<p><\/p>/gim, '');
+            html = html.replace(/<p><h/gim, '<h');
+            html = html.replace(/<\/h([1-6])><\/p>/gim, '</h$1>');
+            html = html.replace(/<p><blockquote>/gim, '<blockquote>');
+            html = html.replace(/<\/blockquote><\/p>/gim, '</blockquote>');
+            html = html.replace(/<p><pre>/gim, '<pre>');
+            html = html.replace(/<\/pre><\/p>/gim, '</pre>');
+            
+            container.innerHTML = html;
+        }
+
+        function displayTOC(toc) {
+            const container = document.getElementById('tocList');
+            
+            if (toc.length === 0) {
+                container.innerHTML = '<li>No headers found</li>';
+                return;
+            }
+            
+            container.innerHTML = toc.map(entry => `
+                <li>
+                    <a href="#${entry.anchor}" class="level-${entry.level}" onclick="scrollToAnchor('${entry.anchor}')">${entry.title}</a>
+                </li>
+            `).join('');
+        }
+
+        function scrollToAnchor(anchor) {
+            const element = document.getElementById(anchor);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Utility Functions
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
@@ -727,14 +1195,33 @@
                 switch(e.key) {
                     case 'r':
                         e.preventDefault();
-                        refreshLogs();
+                        if (currentTab === 'logs') {
+                            refreshLogs();
+                        } else {
+                            loadMarkdownFiles();
+                        }
                         break;
                     case 'f':
                         e.preventDefault();
-                        document.getElementById('symbolFilter').focus();
+                        if (currentTab === 'logs') {
+                            document.getElementById('symbolFilter').focus();
+                        }
+                        break;
+                    case '1':
+                        e.preventDefault();
+                        switchTab('logs');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        switchTab('markdown');
                         break;
                 }
             }
+        });
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', function(e) {
+            initializeFromURL();
         });
     </script>
 </body>
