@@ -169,6 +169,7 @@ pub fn format_bollinger_bands_analysis(
     result
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate Bollinger Bands for volatility and mean reversion analysis
 pub fn calculate_bollinger_bands_indicator(
@@ -206,6 +207,7 @@ pub fn calculate_bollinger_bands_indicator(
     })
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate Bollinger Bands with 24-hour data for comprehensive analysis
 pub fn calculate_bollinger_bands_24h(

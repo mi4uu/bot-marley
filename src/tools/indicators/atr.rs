@@ -131,6 +131,7 @@ pub fn format_atr_analysis(
     result
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate ATR (Average True Range) for volatility analysis
 pub fn calculate_atr_indicator(symbol: String, period: Option<String>) -> String {
@@ -165,6 +166,7 @@ pub fn calculate_atr_indicator(symbol: String, period: Option<String>) -> String
     })
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate ATR with 24-hour data for comprehensive volatility analysis
 pub fn calculate_atr_24h(symbol: String, period: Option<String>) -> String {

@@ -83,7 +83,7 @@ async fn list_log_files() -> Result<Json<Vec<LogFile>>, StatusCode> {
                     let path = entry.path();
                     if path.is_file() {
                         if let Some(filename) = path.file_name().and_then(|n| n.to_str()) {
-                            if filename.starts_with("botmarley.log.") && !filename.ends_with(".tmp") {
+                            if filename.starts_with("botmarley.") {
                                 if let Ok(metadata) = entry.metadata() {
                                     let entry_count = count_log_entries(&path).unwrap_or_else(|e| {
                                         error!("Failed to count entries in {:?}: {:?}", path, e);
@@ -92,8 +92,9 @@ async fn list_log_files() -> Result<Json<Vec<LogFile>>, StatusCode> {
                                     
                                     // Parse date and hour from filename
                                     let parts: Vec<&str> = filename.split('.').collect();
-                                    if parts.len() >= 3 {
-                                        let date_hour = parts[2];
+                                    if parts.len() >= 2 {
+                                        
+                                        let date_hour = parts[1];
                                         let date_parts: Vec<&str> = date_hour.split('-').collect();
                                         if date_parts.len() == 4 {
                                             let date = format!("{}-{}-{}", date_parts[0], date_parts[1], date_parts[2]);

@@ -96,6 +96,7 @@ pub fn format_rsi_analysis(rsi_values: &[f64], symbol: &str, period: usize) -> S
     result
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate RSI (Relative Strength Index) for technical analysis
 pub fn calculate_rsi(symbol: String, period: Option<String>) -> String {
@@ -126,6 +127,7 @@ pub fn calculate_rsi(symbol: String, period: Option<String>) -> String {
     })
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate RSI with 24-hour data for more comprehensive analysis
 pub fn calculate_rsi_24h(symbol: String, period: Option<String>) -> String {

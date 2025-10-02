@@ -206,7 +206,6 @@ fn buy(pair: String, amount: f64, confidence: usize, explanation: String) -> Str
     }
 }
 #[tracing::instrument]
-
 #[tool]
 /// Hold asset, confidence in % about this decision, THIS IS FINAL DECISION
 fn hold(pair: String, confidence: usize, explanation: String) -> String {

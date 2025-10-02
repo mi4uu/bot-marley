@@ -244,6 +244,7 @@ pub fn format_volume_analysis(
     result
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate volume indicators (OBV, MFI, VWAP) for volume analysis
 pub fn calculate_volume_indicators(symbol: String, mfi_period: Option<String>) -> String {
@@ -271,6 +272,7 @@ pub fn calculate_volume_indicators(symbol: String, mfi_period: Option<String>) -
     })
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate volume indicators with 24-hour data for comprehensive analysis
 pub fn calculate_volume_indicators_24h(symbol: String, mfi_period: Option<u32>) -> String {

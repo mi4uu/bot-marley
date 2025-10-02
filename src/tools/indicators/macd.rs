@@ -132,6 +132,7 @@ pub fn format_macd_analysis(
     result
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate MACD (Moving Average Convergence Divergence) for technical analysis
 pub fn calculate_macd_indicator(
@@ -169,6 +170,7 @@ pub fn calculate_macd_indicator(
     })
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate MACD with 24-hour data for more comprehensive analysis
 pub fn calculate_macd_24h(

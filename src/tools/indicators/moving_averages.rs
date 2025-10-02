@@ -126,6 +126,7 @@ pub fn format_ma_analysis(
     result
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate multiple moving averages (SMA, EMA, WMA) for technical analysis
 pub fn calculate_moving_averages(symbol: String, period: Option<String>) -> String {
@@ -157,6 +158,7 @@ pub fn calculate_moving_averages(symbol: String, period: Option<String>) -> Stri
     })
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate SMA (Simple Moving Average) only
 pub fn calculate_sma_indicator(symbol: String, period: Option<String>) -> String {
@@ -193,6 +195,7 @@ pub fn calculate_sma_indicator(symbol: String, period: Option<String>) -> String
     })
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate EMA (Exponential Moving Average) only
 pub fn calculate_ema_indicator(symbol: String, period: Option<String>) -> String {

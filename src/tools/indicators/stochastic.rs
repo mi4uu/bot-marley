@@ -180,6 +180,7 @@ pub fn format_stochastic_analysis(
     result
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate Stochastic Oscillator (KDJ) for momentum analysis
 pub fn calculate_stochastic_indicator(
@@ -211,6 +212,7 @@ pub fn calculate_stochastic_indicator(
     })
 }
 
+#[tracing::instrument]
 #[tool]
 /// Calculate Stochastic with 24-hour data for comprehensive momentum analysis
 pub fn calculate_stochastic_24h(
