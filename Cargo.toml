@@ -5,11 +5,10 @@ edition = "2024"
 
 [dependencies]
 color-eyre = "0.6"
-binance = "0.21.2"
 dotenv = "0.15.0"
 envy = "0.4.2"
 serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.145"
+serde_json = {version = "1.0.145", features = ["preserve_order"]}
 smart-default = "0.7.1"
 tokio = { version = "1.47.1", features = ["full", "rt-multi-thread"] }
 tracing = "0.1.41"
@@ -17,8 +16,8 @@ tracing-subscriber = { version = "0.3.20", features = ["chrono", "parking_lot", 
 tracing-appender = "0.2.3"
 schemars = { version = "1.0", default-features = false}
 # ai-types = "0.2.0"
-mono-ai = {path = "crates/mono-ai"}
-mono-ai-macros = {path = "crates/mono-ai/macros"}
+# mono-ai = {path = "crates/mono-ai"}
+# mono-ai-macros = {path = "crates/mono-ai/macros"}
 reqwest = { version = "0.12.19", features = ["json",  "blocking","rustls-tls"] }
 futures-util = "0.3.31"
 financial_indicators = "1.0.0"
@@ -26,5 +25,14 @@ chrono = { version = "0.4", features = ["serde"] }
 axum = "0.8"
 tower = "0.5"
 tower-http = { version = "0.6", features = ["fs", "cors"] }
-scraper = "0.24.0"
+# scraper = "0.24.0"
 regex = "1.10"
+polars = { version = "0.51", features = ["lazy", "temporal", "ipc", "parquet"] }
+
+[[bin]]
+name = "data_collector"
+path = "src/bin/data_collector.rs"
+
+[[bin]]
+name = "btc_test"
+path = "src/bin/btc_test.rs"

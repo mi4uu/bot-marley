@@ -3,12 +3,13 @@ use chrono::{Local, Utc, Timelike};
 use serde_json::json;
 use tracing::{Event, Subscriber};
 use tracing_subscriber::{
-    fmt::{format::Writer, FormatEvent, FormatFields},
+    fmt::{self, FormatEvent, FormatFields, format::Writer},
     registry::LookupSpan,
 };
-use std::fmt;
+// use std::fmt;
 use color_eyre::eyre::{Result, WrapErr};
-
+use tracing_subscriber::{ layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use color_eyre::Section;
 pub struct CustomJsonFormatter;
 
 impl<S, N> FormatEvent<S, N> for CustomJsonFormatter
@@ -21,7 +22,7 @@ where
         ctx: &tracing_subscriber::fmt::FmtContext<'_, S, N>,
         mut writer: Writer<'_>,
         event: &Event<'_>,
-    ) -> fmt::Result {
+    ) -> std::fmt::Result {
         let metadata = event.metadata();
         let now = Local::now();
         
@@ -113,7 +114,7 @@ impl JsonVisitor {
 }
 
 impl tracing::field::Visit for JsonVisitor {
-    fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn fmt::Debug) {
+    fn record_debug(&mut self, field: &tracing::field::Field, value: &dyn std::fmt::Debug) {
         self.fields.insert(
             field.name().to_string(),
             json!(format!("{:?}", value)),
@@ -208,4 +209,33 @@ impl io::Write for LocalTimeFileAppender {
             Ok(())
         }
     }
+}
+
+
+
+pub fn init_logger(){
+
+// Initialize tracing with custom JSON file logging (hourly rotation with local time)
+let file_appender = LocalTimeFileAppender::new("logs", "botmarley")
+.wrap_err("Failed to create log file appender")
+.with_suggestion(|| "Make sure the logs directory is writable").expect("unable to init file appender");
+let (non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
+
+tracing_subscriber::registry()
+.with(
+    fmt::layer()
+    .with_writer(non_blocking)
+    .event_format(CustomJsonFormatter)
+)
+.with(
+    fmt::layer()
+    .with_writer(std::io::stdout)        .with_span_events(fmt::format::FmtSpan::CLOSE)
+
+    .with_ansi(true)
+    .pretty()
+)
+.with(EnvFilter::from_default_env().add_directive("botmarley=info".parse()
+.wrap_err("Failed to parse log filter directive").expect("unable to init tracing")))
+.init();
+
 }

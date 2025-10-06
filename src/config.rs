@@ -1,7 +1,17 @@
 
+
+use std::{cell::LazyCell, sync::{Arc, LazyLock}};
+
 use serde::{Deserialize, Serialize};
 use smart_default::SmartDefault;
 
+
+pub static CONFIG:LazyLock<Arc<Config>>=LazyLock::new(|| {
+    dotenv::dotenv()
+        .expect("Failed to load .env file");    
+    let config = Config::load();
+    Arc::new(config)
+});
 
 #[derive(Debug,Serialize,Deserialize,SmartDefault,Clone)]
 #[serde(default)]
@@ -22,11 +32,14 @@ pub    openai_api_key:String,
 pub    max_trade_value:usize,
     #[default = 3050]
  pub   web_ui_port:usize,
-    allowed_pairs:String,
+    #[default = "BTC_USDC,ETH_USDC"]
+    pub allowed_pairs: String,
     #[default = "5m"]
    pub trading_interval:String,
    #[default = 30]
-   pub bot_max_turns:usize
+   pub bot_max_turns:usize,
+  
+   pub backtest_start_date:String
 
 }
 
@@ -36,8 +49,15 @@ impl Config{
     }
     pub fn pairs_parts(&self)->Vec<(String,String)>{
         let pairs:Vec<&str>=self.allowed_pairs.split(',').collect();
-     let pairs_parts:Vec<(String,String)>=   pairs.into_iter().map(|p| { let parts=p.split('_').collect::<Vec<&str>>(); (parts[0].to_string(),parts[1].to_string()) } ).collect();
-     pairs_parts
+        let pairs_parts:Vec<(String,String)> = pairs.into_iter().filter_map(|p| {
+            let parts = p.split('_').collect::<Vec<&str>>();
+            if parts.len() >= 2 {
+                Some((parts[0].to_string(), parts[1].to_string()))
+            } else {
+                None
+            }
+        }).collect();
+        pairs_parts
     }
     pub fn pairs(&self)->Vec<String>{
         self.pairs_parts().into_iter().map(|(l,r) | format!("{l}{r}")).collect()
